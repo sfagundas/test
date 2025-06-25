@@ -19,6 +19,10 @@ import {
   fetchContent,
 } from "./commonfunction";
 
+const InputField = ({ go }) => {
+  return console.log(123);
+};
+
 // Компонент AddEditModal МОДАЛКА
 const AddEditModal = ({
   show,
@@ -134,13 +138,20 @@ const DeleteRecoverModal = ({ show, onHide, onConfirm, isRecover }) => {
 // Основной компонент DirCities
 
 export default function DirCities() {
-  const formDataContent = { Id: "", Name: "", NameSm: "" }; // ДОКУМЕНТ
-  const apiList = "";
-  const apiArchive = "";
-  const apiAdd = "";
-  const apiUpd = "";
-  const apiDel = "";
-  const apiRec = "";
+  const formDataContent = {
+    Id: "",
+    Name: "",
+    NameSm: "",
+  }; // ДОКУМЕНТ
+
+  const API = {
+    List: "cities_list",
+    Archive: "archive_cities_list",
+    Add: "add_dir_city",
+    Edit: "edit_dir_city",
+    Delete: "delete_dir_city",
+    Recover: "recover_dir_city",
+  };
 
   const [modalType, setModalType] = useState();
   const [show, setShow] = useState(false);
@@ -150,21 +161,21 @@ export default function DirCities() {
 
   // Загрузка данных при монтировании компонента
   useEffect(() => {
-    const loadCities = async () => {
+    const loadMainContent = async () => {
       try {
-        const data = await fetchContent("cities_list"); // ДОКУМЕНТ
+        const data = await fetchContent(API["List"]);
         setContent(data);
       } catch {}
     };
-    loadCities();
+    loadMainContent();
 
-    const loadArchiveCities = async () => {
+    const loadArchive = async () => {
       try {
-        const data = await fetchContent("archive_cities_list"); // ДОКУМЕНТ
+        const data = await fetchContent(API["Archive"]);
         setArchive(data);
       } catch {}
     };
-    loadArchiveCities();
+    loadArchive();
   }, []);
 
   const setFD = () => {
@@ -270,6 +281,7 @@ export default function DirCities() {
             </Col>
           ))}
       </Row>
+
       <AddEditModal
         show={show && (modalType === "add" || modalType === "edit")}
         onHide={() => handleClose()}
@@ -277,8 +289,8 @@ export default function DirCities() {
         onFormChange={(e) => formEdit(e, setFormData)}
         onSave={
           modalType === "add"
-            ? () => addItem(formData, "add_dir_city", setContent, handleClose) //ДОКУМЕНТ
-            : () => editItem(formData, "edit_dir_city", setContent, handleClose) //ДОКУМЕНТ
+            ? () => addItem(formData, API["Add"], setContent, handleClose)
+            : () => editItem(formData, API["Edit"], setContent, handleClose)
         }
         isEditMode={modalType === "edit"}
       />
@@ -292,19 +304,19 @@ export default function DirCities() {
             ? () =>
                 deleteItem(
                   formData,
-                  "delete_dir_city",
+                  API["Delete"],
                   setContent,
                   setArchive,
                   handleClose
-                ) //ДОКУМЕНТ
+                )
             : () =>
                 recoverItem(
                   formData,
-                  "recover_dir_city",
+                  API["Recover"],
                   setContent,
                   setArchive,
                   handleClose
-                ) //ДОКУМЕНТ
+                )
         }
       />
     </>
