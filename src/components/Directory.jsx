@@ -4,12 +4,14 @@ import Tab from "react-bootstrap/Tab";
 import Nav from "react-bootstrap/Nav";
 import { useState } from "react";
 
+import DirPhTypes from "./directory/DirPhTypes";
+import DirPhStatuses from "./directory/DirPhStatuses";
+import DirAlbumTypes from "./directory/DirAlbumTypes";
 import DirCities from "./directory/DirCities";
 import DirCrmStatuses from "./directory/DirCrmStatuses";
-import DirPhStatuses from "./directory/DirPhStatuses";
 
 function Directory() {
-  const [key, setKey] = useState("cities");
+  const [key, setKey] = useState("phType");
 
   return (
     <>
@@ -27,33 +29,47 @@ function Directory() {
           <Col xxl={2} xl={3} lg={3} md={4} sm={5}>
             <Nav variant="pills" className="flex-column">
               <Nav.Item>
+                <Nav.Link eventKey="phType">Типы съемок</Nav.Link>
+              </Nav.Item>
+
+              <Nav.Item>
+                <Nav.Link eventKey="phStatus">Статусы съемок</Nav.Link>
+              </Nav.Item>
+
+              <Nav.Item>
+                <Nav.Link eventKey="albumTypes">Типы альбомов</Nav.Link>
+              </Nav.Item>
+
+              <Nav.Item>
                 <Nav.Link eventKey="cities">Города</Nav.Link>
               </Nav.Item>
-            </Nav>
-            <Nav variant="pills" className="flex-column">
+
               <Nav.Item>
-                <Nav.Link eventKey="crmStatuses">Crm статусы</Nav.Link>
-              </Nav.Item>
-            </Nav>
-            <Nav variant="pills" className="flex-column">
-              <Nav.Item>
-                <Nav.Link eventKey="phStatuses">Ph статусы</Nav.Link>
+                <Nav.Link eventKey="crmStatus">CRM статусы</Nav.Link>
               </Nav.Item>
             </Nav>
           </Col>
 
           <Col xxl={10} xl={9} lg={9} md={8} sm={7}>
             <Tab.Content>
+              <Tab.Pane eventKey="phType" title="phType">
+                <DirPhTypes />
+              </Tab.Pane>
+
+              <Tab.Pane eventKey="phStatus" title="phStatus">
+                <DirPhStatuses />
+              </Tab.Pane>
+
+              <Tab.Pane eventKey="albumTypes" title="albumTypes">
+                <DirAlbumTypes />
+              </Tab.Pane>
+
               <Tab.Pane eventKey="cities" title="cities">
                 <DirCities />
               </Tab.Pane>
 
-              <Tab.Pane eventKey="crmStatuses" title="crmStatuses">
+              <Tab.Pane eventKey="crmStatus" title="crmStatus">
                 <DirCrmStatuses />
-              </Tab.Pane>
-
-              <Tab.Pane eventKey="phStatuses" title="phStatuses">
-                <DirPhStatuses />
               </Tab.Pane>
             </Tab.Content>
           </Col>
