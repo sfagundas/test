@@ -17,11 +17,7 @@ import {
   recoverItem,
   openModal,
   fetchContent,
-} from "./commonfunction";
-
-const InputField = ({ go }) => {
-  return console.log(123);
-};
+} from "./commonfunction"; // ШАБЛОН
 
 // Компонент AddEditModal МОДАЛКА
 const AddEditModal = ({
@@ -142,7 +138,7 @@ export default function DirCities() {
     Id: "",
     Name: "",
     NameSm: "",
-  }; // ДОКУМЕНТ
+  }; // ДОКУМЕНТ (ШАБЛОН)
 
   const API = {
     List: "cities_list",
@@ -151,7 +147,7 @@ export default function DirCities() {
     Edit: "edit_dir_city",
     Delete: "delete_dir_city",
     Recover: "recover_dir_city",
-  };
+  }; // ДОКУМЕНТ (ШАБЛОН)
 
   const [modalType, setModalType] = useState();
   const [show, setShow] = useState(false);
