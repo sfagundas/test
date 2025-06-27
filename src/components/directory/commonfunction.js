@@ -29,7 +29,7 @@ const getEntityName = (api) => {
 export const addItem = async (formData, api, setItems, handleClose) => {
   const entityName = getEntityName(api);
   try {
-    const response = await fetch(`http://localhost/backend/insert/${api}`, {
+    const response = await fetch(`http://okalbm.ru/api/insert/${api}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export const editItem = async (formData, api, setItems, handleClose) => {
   const entityName = getEntityName(api);
   try {
     const response = await fetch(
-      `http://localhost/backend/insert/${api}/${formData.Id}`,
+      `http://okalbm.ru/api/insert/${api}/${formData.Id}`,
       {
         method: "PUT",
         headers: {
@@ -103,7 +103,7 @@ export const deleteItem = async (
   const entityName = getEntityName(api);
   try {
     const response = await fetch(
-      `http://localhost/backend/insert/${api}/${formData.Id}`,
+      `http://okalbm.ru/api/insert/${api}/${formData.Id}`,
       { method: "DELETE" }
     );
     //   console.log(response.ok);
@@ -116,35 +116,14 @@ export const deleteItem = async (
 
       setArchive((prev) => [...prev, formData]);
       handleClose();
-      window.showNotification("Город перемещен в архив");
+      window.showNotification("Объект перемещен в архив");
     } else {
       setContent((prev) => prev.filter((item) => item.Id !== formData.Id));
       setArchive((prev) => prev.filter((item) => item.Id !== formData.Id));
       console.log("Ошибки нет");
       handleClose();
-      window.showNotification("Город успешно удален");
+      window.showNotification("Объект успешно удален");
     }
-
-    /*
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.log();
-
-      if (errorData.code === "23000") {
-        // Перенос в архив
-        setContent((prev) => prev.filter((item) => item.Id !== formData.Id));
-
-        setArchive((prev) => [...prev, formData]);
-        console.log(123);
-        handleClose();
-        window.showNotification("Город перемещен в архив");
-        throw new Error("Запись используется в других таблицах");
-      }
-      throw new Error(errorData.message || "Ошибка сервера");
-    }
-
-    */
-    // Успешное удаление - обновляем оба состояния
   } catch (error) {
     console.error("Ошибка:", error);
     alert(`Не удалось удалить ${entityName}: ${error.message}`);
@@ -160,7 +139,7 @@ export const recoverItem = async (
 ) => {
   try {
     const response = await fetch(
-      `http://localhost/backend/insert/${api}/${formData.Id}`,
+      `http://okalbm.ru/api/insert/${api}/${formData.Id}`,
       {
         method: "PUT",
         headers: {
@@ -180,10 +159,10 @@ export const recoverItem = async (
     setContent((prev) => [...prev, recoveredItem]);
 
     handleClose();
-    window.showNotification("Город успешно восстановлен из архива");
+    window.showNotification("Объект успешно восстановлен из архива");
   } catch (error) {
     console.error("Ошибка:", error);
-    alert(`Не удалось восстановить город: ${error.message}`);
+    alert(`Не удалось восстановить объект: ${error.message}`);
   }
 };
 
@@ -197,7 +176,7 @@ export const openModal = (type, setShow) => {
 
 export const fetchContent = async (api) => {
   try {
-    const response = await fetch(`http://localhost/backend/api/${api}`);
+    const response = await fetch(`http://okalbm.ru/api/api/${api}`);
     if (!response.ok) {
       throw new Error(`Ошибка при загрузке данных: ${response.statusText}`);
     }

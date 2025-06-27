@@ -11,7 +11,7 @@ const CRMstatusSelect = ({ id, onChange }) => {
     const fetchCRMstatus = async () => {
       try {
         const response = await fetch(
-          "http://localhost/backend/api/crm_status_list"
+          "http://okalbm.ru/api/api/crm_status_list"
         );
         if (!response.ok) {
           throw new Error("Ошибка при получении данных");

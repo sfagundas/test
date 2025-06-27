@@ -1,7 +1,4 @@
 // commonfunction.js
-export const handleCloseDelete = (setShowDelete) => {
-  setShowDelete(false);
-};
 
 export const formEdit = (e, setFormData) => {
   const { name, value } = e.target;
@@ -22,7 +19,8 @@ export const addItem = async (formData, api, setItems, handleClose) => {
     });
 
     if (!response.ok) {
-      throw new Error("Ошибка при добавлении");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || "Ошибка сервера");
     }
 
     const result = await response.json();
@@ -35,8 +33,6 @@ export const addItem = async (formData, api, setItems, handleClose) => {
       ...formData,
       Id: result.Id, // Используем Id, полученный от сервера
     };
-
-    console.log("Новый элемент:", newItem);
 
     setItems((prevContent) => {
       const updatedContent = [...prevContent, newItem];
@@ -52,6 +48,7 @@ export const addItem = async (formData, api, setItems, handleClose) => {
 };
 
 export const editItem = async (formData, api, setItems, handleClose) => {
+  console.log(formData);
   try {
     // Отправляем данные на сервер для обновления
     const response = await fetch(
@@ -66,32 +63,23 @@ export const editItem = async (formData, api, setItems, handleClose) => {
     );
 
     if (!response.ok) {
-      throw new Error("Ошибка при обновлении города");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || "Ошибка сервера");
     }
 
-    // Получаем ответ от сервера (если нужно)
-    const result = await response.json();
-    // Обновляем состояние только после успешного ответа от сервера
     setItems((prevItems) =>
       prevItems.map((item) =>
         item.Id === formData.Id ? { ...item, ...formData } : item
       )
     );
-
-    // Закрываем модальное окно
     handleClose();
   } catch (error) {
     console.error("Ошибка:", error);
-    alert("Не удалось обновить город: " + error.message);
+    alert("Не удалось обновить запись: " + error.message);
   }
 };
 
-export const deleteItem = async (
-  formData,
-  api,
-  setItems,
-  handleCloseDelete
-) => {
+export const deleteItem = async (formData, api, setItems, handleClose) => {
   try {
     // Отправляем запрос на сервер для удаления
     const response = await fetch(
@@ -105,88 +93,21 @@ export const deleteItem = async (
       throw new Error("Ошибка при удалении");
     }
 
-    // Получаем ответ от сервера (если нужно)
-    const result = await response.json();
-
-    // Обновляем состояние только после успешного ответа от сервера
     setItems((prevItems) =>
       prevItems.filter((item) => item.Id !== formData.Id)
     );
 
-    // Закрываем модальное окно
-    handleCloseDelete();
+    handleClose();
   } catch (error) {
     console.error("Ошибка:", error);
-    alert("Не удалось удалить город: " + error.message);
+    alert("Не удалось удалить запись: " + error.message);
   }
 };
 
-export const openModal = (
-  type,
-  category,
-  data,
-  setFormData,
-  setModalType,
-  setShow,
-  setShowDelete
-) => {
-  if (type === "add") {
-    if (category === "Request") {
-      setFormData({
-        Id: "",
-        ClientName: "",
-        Phone: "",
-        cityID: "",
-        CrmStatusID: 1,
-        CrmComment: "",
-      });
-    }
-    if (category === "Good") {
-      setFormData({
-        Id: "",
-        ClientName: "",
-        Phone: "",
-        cityID: "",
-        CrmStatusID: 2,
-        CrmComment: "",
-      });
-    }
-    if (category === "Bad") {
-      setFormData({
-        Id: "",
-        ClientName: "",
-        Phone: "",
-        cityID: "",
-        CrmStatusID: 3,
-        CrmComment: "",
-      });
-    }
-    if (category === "Documents") {
-      setFormData({
-        Id: "",
-        ClientName: "",
-        Phone: "",
-        cityID: "",
-        CrmStatusID: 4,
-        CrmComment: "",
-      });
-    }
-    setModalType("add");
-    setShow(true);
-  } else if (type === "edit") {
-    setFormData({
-      Id: data.Id,
-      ClientName: data.ClientName,
-      Phone: data.Phone,
-      cityID: data.cityID,
-      CrmStatusID: data.CrmStatusID,
-      CrmComment: data.CrmComment,
-    });
-    setModalType("edit");
+export const openModal = (type, setShow) => {
+  if (type === "add" || type === "edit") {
     setShow(true);
   } else if (type === "delete") {
-    setFormData({ Id: data });
-    setModalType("delete");
-    setShowDelete(true);
+    setShow(true);
   }
 };

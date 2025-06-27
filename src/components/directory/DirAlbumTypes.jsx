@@ -161,8 +161,8 @@ export default function DirAlbumTypes() {
     Archive: "archive_album_types_list",
     Add: "add_dir_alb_types",
     Edit: "edit_dir_alb_types",
-    Delete: "delete_delete_dir_alb_typesir_city",
-    Recover: "recover_direcover_dir_alb_typesr_city",
+    Delete: "delete_dir_alb_types",
+    Recover: "recover_dir_alb_types",
   };
 
   const [modalType, setModalType] = useState();
@@ -345,7 +345,7 @@ export default function DirAlbumTypes() {
             ? () =>
                 deleteItem(
                   formData,
-                  API["List"],
+                  API["Delete"],
                   setContent,
                   setArchive,
                   handleClose

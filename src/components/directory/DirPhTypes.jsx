@@ -63,6 +63,7 @@ const AddEditModal = ({
                 </InputGroup>
               </Form.Group>
             </Col>
+
             <Col sm={12}>
               <Form.Group className="mb-3" controlId="Comment">
                 <Form.Label>Комментарий</Form.Label>

@@ -10,7 +10,6 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import {
-  handleCloseDelete,
   formEdit,
   addItem,
   editItem,
@@ -151,29 +150,46 @@ const DeleteModal = ({ show, onHide, onConfirm }) => {
 };
 
 export default function Request({ content, setContent }) {
-  const [show, setShow] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-  const [formData, setFormData] = useState({
+  const formDataContent = {
     Id: "",
     ClientName: "",
     Phone: "",
     cityID: "",
-    CrmStatusID: "",
-    CrmComment: "",
-  });
+    CrmStatusID: "1", //1-request, 2-documents, 3-good, 4-bad
+    ManagerNotes: "",
+  };
 
-  const [modalType, setModalType] = useState("add");
+  const API = {
+    Add: "crm_add_cls_main",
+    Edit: "crm_edit_cls_main",
+    Delete: "crm_delete_cls_main",
+  };
+
+  const [modalType, setModalType] = useState();
+  const [show, setShow] = useState(false);
+  const [formData, setFormData] = useState(formDataContent);
+
+  const setFD = () => {
+    setFormData(formDataContent);
+  };
 
   const handleClose = () => {
     setShow(false);
-    setFormData({
-      Id: "",
-      ClientName: "",
-      Phone: "",
-      cityID: "",
-      CrmStatusID: "",
-      CrmComment: "",
-    });
+    setFD();
+  };
+
+  const JVV = (type, data) => {
+    setModalType(type);
+
+    if (type === "add") {
+      setFD();
+    } else if (type === "edit") {
+      setFormData(data);
+    } else if (type === "delete") {
+      setFormData({ Id: data });
+    }
+
+    openModal(type, setShow);
   };
 
   return (
@@ -181,32 +197,24 @@ export default function Request({ content, setContent }) {
       <Button
         variant="light"
         className="col-12 mb-3"
-        onClick={() =>
-          openModal(
-            "add",
-            "Request",
-            null,
-            setFormData,
-            setModalType,
-            setShow,
-            setShowDelete
-          )
-        }
+        onClick={() => JVV("add", null)}
       >
         <i className="bi bi-plus-lg"></i>
       </Button>
 
       <Row>
         {content
-          .filter((item) => item.CrmStatusID == 1)
+          .filter((item) => item.StatusId == 1)
           .map((item) => (
-            <Col sm={6} md={6} lg={6} xl={4} key={item.Id}>
+            <Col sm={6} md={6} lg={4} xl={3} key={item.Id}>
               <Card className="mb-3">
                 <Card.Body style={{ paddingBottom: "10px" }}>
                   <div className="d-flex justify-content-between">
                     <Card.Title className="mb-2">
                       <div className="d-flex align-items-center">
-                        <span>{item.ClientName}</span>
+                        <span style={{ fontSize: "14px" }}>
+                          {item.ClientName}
+                        </span>
                       </div>
                     </Card.Title>
                     <div>
@@ -217,35 +225,11 @@ export default function Request({ content, setContent }) {
                           id="dropdown-basic"
                         ></Dropdown.Toggle>
                         <Dropdown.Menu>
-                          <Dropdown.Item
-                            onClick={() =>
-                              openModal(
-                                "edit",
-                                "Request",
-                                item,
-                                setFormData,
-                                setModalType,
-                                setShow,
-                                setShowDelete
-                              )
-                            }
-                          >
+                          <Dropdown.Item onClick={() => JVV("edit", item)}>
                             <i className="bi bi-pencil-square me-2"></i>
                             Изменить
                           </Dropdown.Item>
-                          <Dropdown.Item
-                            onClick={() =>
-                              openModal(
-                                "delete",
-                                "Request",
-                                item.Id,
-                                setFormData,
-                                setModalType,
-                                setShow,
-                                setShowDelete
-                              )
-                            }
-                          >
+                          <Dropdown.Item onClick={() => JVV("delete", item.Id)}>
                             <i className="bi bi-trash me-2"></i>
                             Удалить
                           </Dropdown.Item>
@@ -255,11 +239,11 @@ export default function Request({ content, setContent }) {
                   </div>
                   <div className="mb-2 text-body-secondary">
                     <Row>
-                      <Col sm={1} className="pt-1" style={{ fontSize: "14px" }}>
+                      <Col sm={1} className="pt-1" style={{ fontSize: "12px" }}>
                         <i className="bi bi-telephone "></i>
                       </Col>
                       <Col sm={10}>
-                        <small>{item.Phone}</small>
+                        <small style={{ fontSize: "11px" }}>{item.Phone}</small>
                       </Col>
                     </Row>
                   </div>
@@ -273,7 +257,7 @@ export default function Request({ content, setContent }) {
                         <i className="bi bi-chat-right-text me-3"></i>
                       </Col>
                       <Col sm={10}>
-                        <small>{item.CrmComment}</small>
+                        <small>{item.ManagerNotes}</small>
                       </Col>
                     </Row>
                   </div>
@@ -290,26 +274,22 @@ export default function Request({ content, setContent }) {
 
       <AddEditModal
         show={show && (modalType === "add" || modalType === "edit")}
-        onHide={handleClose}
+        onHide={() => handleClose()}
         formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
         onSave={
           modalType === "add"
-            ? () =>
-                addItem(formData, "crm_add_cls_main", setContent, handleClose)
-            : () =>
-                editItem(formData, "crm_edit_cls_main", setContent, handleClose)
+            ? () => addItem(formData, API["Add"], setContent, handleClose)
+            : () => editItem(formData, API["Edit"], setContent, handleClose)
         }
         isEditMode={modalType === "edit"}
       />
 
       <DeleteModal
-        show={showDelete}
-        onHide={() => handleCloseDelete(setShowDelete)}
+        show={show && modalType === "delete"}
+        onHide={() => handleClose()}
         onConfirm={() =>
-          deleteItem(formData, "crm_delete_cls_main", setContent, () =>
-            handleCloseDelete(setShowDelete)
-          )
+          deleteItem(formData, API["Delete"], setContent, handleClose)
         }
       />
     </>

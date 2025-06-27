@@ -20,9 +20,7 @@ const CRM = () => {
     // Функция для получения данных из API
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://localhost/backend/api/crm_class_list"
-        );
+        const response = await fetch("http://okalbm.ru/api/api/crm_class_list");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
