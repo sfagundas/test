@@ -10,3 +10,8 @@ nav .active {
   --bs-nav-pills-link-active-bg: rgb(255, 200, 18) !important;
   --bs-nav-pills-link-active-color: #282828 !important;
 }
+
+.mainCardTitle {
+  font-size: 15px !important;
+  text-transform: uppercase;
+}

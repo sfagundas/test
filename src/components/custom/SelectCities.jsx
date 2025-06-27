@@ -10,9 +10,7 @@ const CitySelect = ({ id, onChange }) => {
     // Функция для получения списка городов
     const fetchCities = async () => {
       try {
-        const response = await fetch(
-          "http://localhost/backend/api/cities_list"
-        );
+        const response = await fetch("http://okalbm.ru/api/api/cities_list");
         if (!response.ok) {
           throw new Error("Ошибка при получении данных");
         }

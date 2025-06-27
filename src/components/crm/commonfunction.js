@@ -105,9 +105,5 @@ export const deleteItem = async (formData, api, setItems, handleClose) => {
 };
 
 export const openModal = (type, setShow) => {
-  if (type === "add" || type === "edit") {
-    setShow(true);
-  } else if (type === "delete") {
-    setShow(true);
-  }
+  setShow(true);
 };

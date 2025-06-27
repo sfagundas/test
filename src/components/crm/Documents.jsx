@@ -18,9 +18,7 @@ import {
 } from "./commonfunction";
 import SelectCities from "../custom/SelectCities";
 import SelectCRMstatus from "../custom/SelectCRMstatus";
-
-import NotificationPanel from "./small/NotificationPanel";
-import OkBadgeDate from "./../custom/OkBadgeDate";
+import OkBadgeDate from "../custom/OkBadgeDate";
 
 const AddEditModal = ({
   show,
@@ -86,7 +84,7 @@ const AddEditModal = ({
             </Col>
             <Col sm={12} md={6}>
               <Form.Group className="mb-3" controlId="cityID">
-                <SelectCities id={formData.cityID} onChange={onFormChange} />
+                <SelectCities id={formData.cityId} onChange={onFormChange} />
               </Form.Group>
             </Col>
 
@@ -128,12 +126,136 @@ const AddEditModal = ({
   );
 };
 
+const CommentModal = ({ show, onHide, formData, onFormChange, onSave }) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave();
+  };
+
+  return (
+    <Modal show={show} onHide={onHide}>
+      <Modal.Header closeButton>
+        <Modal.Title>{"Комментарий"}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          <input type="hidden" name="Id" value={formData.Id} />
+          <Row>
+            <Col sm={12}>
+              <Form.Group className="mb-3" controlId="CrmComment">
+                <Form.Label>Комментарий</Form.Label>
+                <Form.Control
+                  aria-describedby="inputCrmCommentPrepend"
+                  type="text"
+                  name="CrmComment"
+                  as="textarea"
+                  placeholder="Описание"
+                  onChange={onFormChange}
+                  value={formData.CrmComment}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Отмена
+            </Button>
+            <Button variant="warning" type="submit">
+              {"Сохранить"}
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const DateModal = ({ show, onHide, formData, onFormChange, onSave }) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave();
+  };
+
+  return (
+    <Modal show={show} onHide={onHide}>
+      <Modal.Header closeButton>
+        <Modal.Title>{"Дата следующей связи"}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          <input type="hidden" name="Id" value={formData.Id} />
+          <Row>
+            <Col sm={12}>
+              <Form.Group className="mb-3" controlId="CrmComment">
+                <Form.Label>Комментарий</Form.Label>
+                <Form.Control
+                  aria-describedby="inputCrmCommentPrepend"
+                  type="date"
+                  name="CrmComment"
+                  as="textarea"
+                  placeholder="Описание"
+                  onChange={onFormChange}
+                  value={formData.CrmComment}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Отмена
+            </Button>
+            <Button variant="warning" type="submit">
+              {"Сохранить"}
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const StatusModal = ({ show, onHide, formData, onFormChange, onSave }) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave();
+  };
+
+  return (
+    <Modal show={show} onHide={onHide}>
+      <Modal.Header closeButton>
+        <Modal.Title>{"Изменить статус клиента"}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          <input type="hidden" name="Id" value={formData.Id} />
+          <Row>
+            <Col sm={12}>
+              <SelectCRMstatus
+                id={formData.CrmStatusID}
+                onChange={onFormChange}
+              />
+            </Col>
+          </Row>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Отмена
+            </Button>
+            <Button variant="warning" type="submit">
+              {"Сохранить"}
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
 export default function Documents({ content, setContent }) {
   const formDataContent = {
     Id: "",
     ClientName: "",
     Phone: "",
-    cityID: "",
+    cityId: "",
     StatusId: "1", //1-request, 2-documents, 3-good, 4-bad
     ManagerNotes: "",
   };
@@ -165,6 +287,8 @@ export default function Documents({ content, setContent }) {
       setFormData(data);
     } else if (type === "delete") {
       setFormData({ Id: data });
+    } else if (type === "comment") {
+      setFormData({ Id: data });
     }
 
     openModal(type, setShow);
@@ -179,7 +303,6 @@ export default function Documents({ content, setContent }) {
       >
         <i className="bi bi-plus-lg"></i>
       </Button>
-
       <Row>
         {content
           .filter((item) => item.StatusId == 2)
@@ -188,7 +311,7 @@ export default function Documents({ content, setContent }) {
               <Card className="mb-3">
                 <Card.Body style={{ paddingBottom: "10px" }}>
                   <div className="d-flex justify-content-between">
-                    <Card.Title className="mb-2">
+                    <Card.Title className="mb-2 mainCardTitle">
                       <div className="d-flex align-items-center">
                         <span>{item.ClientName}</span>
                       </div>
@@ -201,6 +324,18 @@ export default function Documents({ content, setContent }) {
                           id="dropdown-basic"
                         ></Dropdown.Toggle>
                         <Dropdown.Menu>
+                          <Dropdown.Item onClick={() => JVV("date", item)}>
+                            <i class="bi bi-calendar-event me-2"></i>
+                            Дата связи
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => JVV("comment", item)}>
+                            <i className="bi bi-chat-right-text me-2"></i>
+                            Комментарий
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => JVV("status", item)}>
+                            <i class="bi bi-arrow-left-right me-2"></i>
+                            Статус
+                          </Dropdown.Item>
                           <Dropdown.Item onClick={() => JVV("edit", item)}>
                             <i className="bi bi-pencil-square me-2"></i>
                             Изменить
@@ -219,7 +354,6 @@ export default function Documents({ content, setContent }) {
                       </Col>
                     </Row>
                   </div>
-
                   <div
                     className="mb-2 text-body-secondary"
                     style={{ fontSize: "12px" }}
@@ -233,17 +367,12 @@ export default function Documents({ content, setContent }) {
                       </Col>
                     </Row>
                   </div>
-                  <hr style={{ marginTop: "6px", marginBottom: "6px" }} />
-                  <Row>
-                    <Col></Col>
-                    <Col></Col>
-                  </Row>
+                  <OkBadgeDate date={"2025-06-22"}></OkBadgeDate>
                 </Card.Body>
               </Card>
             </Col>
           ))}
       </Row>
-
       <AddEditModal
         show={show && (modalType === "add" || modalType === "edit")}
         onHide={() => handleClose()}
@@ -255,6 +384,27 @@ export default function Documents({ content, setContent }) {
             : () => editItem(formData, API["Edit"], setContent, handleClose)
         }
         isEditMode={modalType === "edit"}
+      />
+      <CommentModal
+        show={show && modalType === "comment"}
+        onHide={() => handleClose()}
+        formData={formData}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        onSave={""}
+      />
+      <DateModal
+        show={show && modalType === "date"}
+        onHide={() => handleClose()}
+        formData={formData}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        onSave={""}
+      />
+      <StatusModal
+        show={show && modalType === "status"}
+        onHide={() => handleClose()}
+        formData={formData}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        onSave={""}
       />
     </>
   );
