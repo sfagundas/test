@@ -7,7 +7,7 @@ const CRMstatusSelect = ({ id, onChange }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Функция для получения списка городов
+    // Функция для получения списка статусов
     const fetchCRMstatus = async () => {
       try {
         const response = await fetch(
@@ -38,13 +38,13 @@ const CRMstatusSelect = ({ id, onChange }) => {
   return (
     <>
       <div className={`mb-3`}>
-        <label htmlFor="CrmStatusID" className="form-label">
+        <label htmlFor="StatusId" className="form-label">
           CRM статус
         </label>
         <select
           className="form-control"
-          name="CrmStatusID"
-          id="CrmStatusID"
+          name="StatusId"
+          id="StatusId"
           onChange={onChange}
           required
         >
@@ -53,7 +53,7 @@ const CRMstatusSelect = ({ id, onChange }) => {
             <option
               key={crm.Id}
               value={crm.Id}
-              selected={crm.Id === Number(id)} // Устанавливаем selected, если id совпадает
+              selected={crm.Id === id} // Устанавливаем selected, если id совпадает
             >
               {crm.Name}
             </option>

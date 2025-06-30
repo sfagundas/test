@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { Spinner } from "react-bootstrap";
+
 const CitySelect = ({ id, onChange }) => {
   // Деструктурируем id из props
   const [cities, setCities] = useState([]);
@@ -27,7 +29,12 @@ const CitySelect = ({ id, onChange }) => {
   }, []);
 
   if (loading) {
-    return <div>Загрузка...</div>;
+    return (
+      <div>
+        Город <br></br>
+        <Spinner animation="border" variant="primary" style={{}} />
+      </div>
+    );
   }
 
   if (error) {
@@ -36,22 +43,23 @@ const CitySelect = ({ id, onChange }) => {
   return (
     <>
       <div className={`mb-3`}>
-        <label htmlFor="cityID" className="form-label">
+        <label htmlFor="CityId" className="form-label">
           Город
         </label>
         <select
           className="form-control"
-          name="cityID"
-          id="cityID"
+          name="CityId"
+          id="CityId"
           required
           onChange={onChange}
         >
           <option value="">-</option>
+
           {cities.map((city) => (
             <option
               key={city.Id}
               value={city.Id}
-              selected={city.Id === Number(id)} // Устанавливаем selected, если id совпадает
+              selected={city.Id === id} // Устанавливаем selected, если id совпадает
             >
               {city.Name}
             </option>

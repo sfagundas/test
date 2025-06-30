@@ -1,20 +1,106 @@
 import React from "react";
 import { Row, Col, Tab, Nav, Badge } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Request from "./crm/Request";
 import Good from "./crm/Good";
 import Bad from "./crm/Bad";
 import Documents from "./crm/Documents";
 
+import { openModal } from "./crm/commonfunction";
+
 const CRM = () => {
   const [content, setContent] = useState([]);
   const [key, setKey] = useState("request");
-  const [notifications, setNotifications] = useState({
-    Request: "1",
-    Documents: "2",
-    Good: "3",
-    Bad: "4",
-  });
+  const [notifications, setNotifications] = useState({});
+
+  const formDataContent = {
+    Id: "",
+    ClientName: "",
+    Phone: "",
+    CityId: "",
+  };
+
+  const [modalType, setModalType] = useState();
+  const [show, setShow] = useState(false);
+  const [formData, setFormData] = useState(formDataContent);
+
+  const setFD = () => {
+    setFormData(formDataContent);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    setFD();
+  };
+
+  const controlFormData = (type, data) => {
+    setModalType(type);
+
+    if (type === "add") {
+      setFD();
+    } else if (type === "edit") {
+      setFormData({
+        Id: data.Id,
+        ClientName: data.ClientName,
+        CityId: data.CityId,
+        Phone: data.Phone,
+      });
+    } else if (type === "delete") {
+      setFormData({ Id: data });
+    } else if (type === "comment") {
+      setFormData({ Id: data.CrmId, ManagerNotes: data.ManagerNotes });
+    } else if (type === "status") {
+      setFormData({ Id: data.CrmId, StatusId: data.StatusId });
+    } else if (type === "date") {
+      setFormData({ Id: data.CrmId, NextDate: data.NextDate });
+    } else if (type === "to_work") {
+      setFormData({ Id: data });
+    }
+
+    openModal(type, setShow);
+  };
+
+  const updateNotifications = useCallback((data) => {
+    const counts = {
+      Request: 0,
+      Bad: 0,
+      Good: 0,
+      Documents: 0,
+    };
+
+    data.forEach((item) => {
+      const status = String(item.StatusId); // Явное преобразование в строку
+      if (status === "1") counts.Request++;
+      if (status === "2") counts.Bad++;
+      if (status === "3") counts.Good++;
+      if (status === "4") counts.Documents++;
+    });
+
+    setNotifications((prev) => {
+      // 2. Обновляем только если значения изменились
+      if (
+        prev.Request === String(counts.Request) &&
+        prev.Bad === String(counts.Bad) &&
+        prev.Good === String(counts.Good) &&
+        prev.Documents === String(counts.Documents)
+      ) {
+        return prev;
+      }
+      return {
+        Request: String(counts.Request),
+        Bad: String(counts.Bad),
+        Good: String(counts.Good),
+        Documents: String(counts.Documents),
+      };
+    });
+  }, []);
+
+  useEffect(() => {
+    // 3. Вызываем updateNotifications только при изменении content
+    if (content.length > 0) {
+      updateNotifications(content);
+    }
+  }, [content, updateNotifications]);
 
   useEffect(() => {
     // Функция для получения данных из API
@@ -65,13 +151,13 @@ const CRM = () => {
 
               <Nav.Item>
                 <Nav.Link
-                  eventKey="documents"
+                  eventKey="bad"
                   className="d-flex justify-content-between"
                 >
-                  <span>Документы</span>
+                  <span>Отрицательно</span>
                   <div>
                     <Badge pill bg="light" text="dark">
-                      {notifications.Documents}
+                      {notifications.Bad}
                     </Badge>
                   </div>
                 </Nav.Link>
@@ -93,13 +179,13 @@ const CRM = () => {
 
               <Nav.Item>
                 <Nav.Link
-                  eventKey="bad"
+                  eventKey="documents"
                   className="d-flex justify-content-between"
                 >
-                  <span>Отрицательно</span>
+                  <span>Документы</span>
                   <div>
                     <Badge pill bg="light" text="dark">
-                      {notifications.Bad}
+                      {notifications.Documents}
                     </Badge>
                   </div>
                 </Nav.Link>
@@ -110,19 +196,55 @@ const CRM = () => {
           <Col xxl={10} xl={9} lg={9} md={8} sm={7}>
             <Tab.Content>
               <Tab.Pane eventKey="request" title="request">
-                <Request content={content} setContent={setContent} />
+                <Request
+                  content={content}
+                  setContent={setContent}
+                  modalType={modalType}
+                  show={show}
+                  setFormData={setFormData}
+                  handleClose={handleClose}
+                  controlFormData={controlFormData}
+                  formData={formData}
+                />
               </Tab.Pane>
 
               <Tab.Pane eventKey="documents" title="documents">
-                <Documents content={content} setContent={setContent} />
+                <Documents
+                  content={content}
+                  setContent={setContent}
+                  modalType={modalType}
+                  show={show}
+                  setFormData={setFormData}
+                  handleClose={handleClose}
+                  controlFormData={controlFormData}
+                  formData={formData}
+                />
               </Tab.Pane>
 
               <Tab.Pane eventKey="good" title="good">
-                <Good content={content} setContent={setContent} />
+                <Good
+                  content={content}
+                  setContent={setContent}
+                  modalType={modalType}
+                  show={show}
+                  setFormData={setFormData}
+                  handleClose={handleClose}
+                  controlFormData={controlFormData}
+                  formData={formData}
+                />
               </Tab.Pane>
 
               <Tab.Pane eventKey="bad" title="bad">
-                <Bad content={content} setContent={setContent} />
+                <Bad
+                  content={content}
+                  setContent={setContent}
+                  modalType={modalType}
+                  show={show}
+                  setFormData={setFormData}
+                  handleClose={handleClose}
+                  controlFormData={controlFormData}
+                  formData={formData}
+                />
               </Tab.Pane>
             </Tab.Content>
           </Col>

@@ -1,5 +1,15 @@
 // commonfunction.js
 
+export const API = {
+  Add: "add_cls_main",
+  Edit: "edit_cls_main",
+  EditComment: "edit_crm_comment",
+  EditCrmDate: "edit_crm_date",
+  EditStatus: "edit_crm_status",
+  Delete: "delete_cls_main",
+  toWork: "to_work_cls",
+};
+
 export const formEdit = (e, setFormData) => {
   const { name, value } = e.target;
   setFormData((prevData) => ({
@@ -10,7 +20,7 @@ export const formEdit = (e, setFormData) => {
 
 export const addItem = async (formData, api, setItems, handleClose) => {
   try {
-    const response = await fetch(`http://localhost/backend/insert/${api}`, {
+    const response = await fetch(`http://okalbm.ru/api/insert/${api}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,8 +40,12 @@ export const addItem = async (formData, api, setItems, handleClose) => {
     }
 
     const newItem = {
-      ...formData,
-      Id: result.Id, // Используем Id, полученный от сервера
+      Id: String(result.Id),
+      ClientName: formData.ClientName || "",
+      Phone: formData.Phone || "",
+      CityId: formData.CityId || "",
+      StatusId: "1",
+      // Добавьте остальные обязательные поля, которые есть в других элементах
     };
 
     setItems((prevContent) => {
@@ -48,11 +62,10 @@ export const addItem = async (formData, api, setItems, handleClose) => {
 };
 
 export const editItem = async (formData, api, setItems, handleClose) => {
-  console.log(formData);
   try {
     // Отправляем данные на сервер для обновления
     const response = await fetch(
-      `http://localhost/backend/insert/${api}/${formData.Id}`,
+      `http://okalbm.ru/api/insert/${api}/${formData.Id}`,
       {
         method: "PUT", // или "PATCH", в зависимости от вашего API
         headers: {
@@ -83,7 +96,7 @@ export const deleteItem = async (formData, api, setItems, handleClose) => {
   try {
     // Отправляем запрос на сервер для удаления
     const response = await fetch(
-      `http://localhost/backend/insert/${api}/${formData.Id}`,
+      `http://okalbm.ru/api/insert/${api}/${formData.Id}`,
       {
         method: "DELETE", // Используем метод DELETE
       }
@@ -101,6 +114,31 @@ export const deleteItem = async (formData, api, setItems, handleClose) => {
   } catch (error) {
     console.error("Ошибка:", error);
     alert("Не удалось удалить запись: " + error.message);
+  }
+};
+
+export const toWork = async (formData, api, setItems, handleClose) => {
+  try {
+    // Отправляем запрос на сервер для удаления
+    const response = await fetch(
+      `http://okalbm.ru/api/insert/${api}/${formData.Id}`,
+      {
+        method: "put",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Ошибка при переносе");
+    }
+
+    setItems((prevItems) =>
+      prevItems.filter((item) => item.Id !== formData.Id)
+    );
+
+    handleClose();
+  } catch (error) {
+    console.error("Ошибка:", error);
+    alert("Не удалось перенести запись: " + error.message);
   }
 };
 
