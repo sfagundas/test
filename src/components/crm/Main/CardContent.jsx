@@ -96,10 +96,6 @@ const CardContent = ({ content, controlFormData, StatusId }) => {
                 {item.NextDate && item.NextDate.trim() !== "" && (
                   <OkBadgeDate date={item.NextDate} />
                 )}
-                <Row>
-                  <Col></Col>
-                  <Col></Col>
-                </Row>
               </Card.Body>
             </Card>
           </Col>

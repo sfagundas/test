@@ -1,6 +1,7 @@
 import React from "react";
-import { Row, Col, Tab, Nav, Badge } from "react-bootstrap";
+import { Row, Col, Tab, Nav, Badge, Spinner } from "react-bootstrap";
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import Request from "./crm/Request";
 import Good from "./crm/Good";
 import Bad from "./crm/Bad";
@@ -23,6 +24,8 @@ const CRM = () => {
   const [modalType, setModalType] = useState();
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState(formDataContent);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const setFD = () => {
     setFormData(formDataContent);
@@ -111,15 +114,41 @@ const CRM = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        setContent(data); // Обновляем состояние content данными из API
+        setContent(data);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData(); // Вызываем функцию для получения данных
   }, []);
 
+  if (isLoading) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="alert alert-danger m-3">
+        Error loading data: {error}
+        <Link to="/classes" className="ms-2">
+          Back to classes
+        </Link>
+      </div>
+    );
+  }
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
