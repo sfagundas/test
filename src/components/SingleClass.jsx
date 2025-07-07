@@ -317,7 +317,7 @@ export default function Class() {
 
   useEffect(() => {
     // Функция для получения данных из API
-    const fetchDataв = async () => {
+    const fetchData = async () => {
       try {
         const response = await fetch(
           `http://okalbm.ru/api/single_class/get_photosessions/${class_id}`
@@ -335,7 +335,7 @@ export default function Class() {
       }
     };
 
-    fetchDataв(); // Вызываем функцию для получения данных
+    fetchData(); // Вызываем функцию для получения данных
   }, []);
 
   if (isLoading) {

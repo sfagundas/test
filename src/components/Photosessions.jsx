@@ -2,13 +2,28 @@ import React from "react";
 
 import { Row, Col, Card, Spinner, Nav, Badge, Tab } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import OkBadgeDate from "./custom/OkBadgeDate";
+
 import { Link } from "react-router-dom";
+import { openModal } from "./photosessions/commonfunction";
+
+import NoReserved from "./photosessions/noReserved";
+import Reserved from "./photosessions/Reserved";
+import Complete from "./photosessions/completed";
 
 function AllPhotosessions() {
+  const formDataContent = {
+    Id: "",
+    ClientName: "",
+    Phone: "",
+    CityId: "",
+  };
+
   const [content, setContent] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [formData, setFormData] = useState(formDataContent);
+  const [show, setShow] = useState(false);
+  const [modalType, setModalType] = useState();
 
   const [key, setKey] = useState("noReserved");
 
@@ -58,6 +73,25 @@ function AllPhotosessions() {
       </div>
     );
   }
+
+  const setFD = () => {
+    setFormData(formDataContent);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    setFD();
+  };
+
+  const controlFormData = (type, data) => {
+    setModalType(type);
+
+    if (type === "add") {
+      setFD();
+    }
+
+    openModal(type, setShow);
+  };
 
   return (
     <>
@@ -114,62 +148,40 @@ function AllPhotosessions() {
           <Col xxl={10} xl={9} lg={9} md={8} sm={7}>
             <Tab.Content>
               <Tab.Pane eventKey="noReserved" title="noReserved">
-                {content.map((item) => (
-                  <Col sm={12}>
-                    <Card className="mb-3">
-                      <Card.Body style={{ paddingBottom: "10px" }}>
-                        <div className="d-flex justify-content-between">
-                          <Card.Title className="mb-2">
-                            <div className="d-flex align-items-center">
-                              <span style={{ fontSize: "14px" }}>
-                                <Link to={`/classes/single_class/${item.Id}`}>
-                                  {item.ClientName}
-                                </Link>
-                              </span>
-                            </div>
-                          </Card.Title>
-                        </div>
-                        <div className="mb-2 text-body-secondary">
-                          <Row>
-                            <Col
-                              sm={1}
-                              className="pt-1"
-                              style={{ fontSize: "12px" }}
-                            >
-                              <i className="bi bi-telephone "></i>
-                            </Col>
-                            <Col sm={10}>
-                              <small style={{ fontSize: "11px" }}>
-                                8-888-888-88-88
-                              </small>
-                            </Col>
-                          </Row>
-                        </div>
-                        <div
-                          className="mb-2 text-body-secondary"
-                          style={{ fontSize: "12px" }}
-                        >
-                          <Row>
-                            <Col sm={1} className="pt-1">
-                              <i className="bi bi-chat-right-text me-3"></i>
-                            </Col>
-                            <Col sm={10}>
-                              <small>Записка менеджера</small>
-                            </Col>
-                          </Row>
-                        </div>
-
-                        <OkBadgeDate date={"2025-04-20"} />
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
+                <NoReserved
+                  content={content}
+                  setContent={setContent}
+                  modalType={modalType}
+                  show={show}
+                  setFormData={setFormData}
+                  handleClose={handleClose}
+                  controlFormData={controlFormData}
+                  formData={formData}
+                />
               </Tab.Pane>
               <Tab.Pane eventKey="Reserved" title="Reserved">
-                2
+                <Reserved
+                  content={content}
+                  setContent={setContent}
+                  modalType={modalType}
+                  show={show}
+                  setFormData={setFormData}
+                  handleClose={handleClose}
+                  controlFormData={controlFormData}
+                  formData={formData}
+                />
               </Tab.Pane>
               <Tab.Pane eventKey="Completed" title="Completed">
-                3
+                <Complete
+                  content={content}
+                  setContent={setContent}
+                  modalType={modalType}
+                  show={show}
+                  setFormData={setFormData}
+                  handleClose={handleClose}
+                  controlFormData={controlFormData}
+                  formData={formData}
+                />
               </Tab.Pane>
             </Tab.Content>
           </Col>
