@@ -12,6 +12,7 @@ import {
   InputGroup,
 } from "react-bootstrap";
 
+import PhTypeSelect from "./custom/PhTypeSelect";
 import {
   openModal,
   API,
@@ -152,7 +153,7 @@ const EditMainInfoModal = ({
               Отмена
             </Button>
             <Button variant="warning" type="submit">
-              Добавить
+              Сохранить
             </Button>
           </Modal.Footer>
         </Form>
@@ -210,6 +211,46 @@ const EditOrderModal = ({ show, onHide, formData, onFormChange, onSave }) => {
   );
 };
 
+const AddPhotosessionModal = ({
+  show,
+  onHide,
+  formData,
+  onFormChange,
+  onSave,
+}) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave();
+  };
+
+  return (
+    <Modal show={show} onHide={onHide}>
+      <Modal.Header closeButton>
+        <Modal.Title>Добавление съемки</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          <input type="hidden" name="ClassId" value={formData.Id} />
+          <input type="hidden" name="StatusId" value={formData.StatusId} />
+          <Row>
+            <Col sm={12}>
+              <PhTypeSelect onChange={onFormChange} />
+            </Col>
+          </Row>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>
+              Отмена
+            </Button>
+            <Button variant="warning" type="submit">
+              Добавить
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
 export default function Class() {
   const { class_id } = useParams();
 
@@ -230,6 +271,9 @@ export default function Class() {
     if (type === "editOrder") {
       setFormData({ Id: data });
     }
+    if (type === "addPhotosession") {
+      setFormData({ ClassId: data.Id, StatusId: "1" });
+    }
 
     openModal(type, setShow);
   };
@@ -244,6 +288,7 @@ export default function Class() {
   };
 
   const [content, setContent] = useState([]);
+  const [photosessions, setPhotosessions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -252,7 +297,7 @@ export default function Class() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://okalbm.ru/api/api/work_class/${class_id}`
+          `http://okalbm.ru/api/single_class/get_main_info/${class_id}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -269,6 +314,30 @@ export default function Class() {
 
     fetchData(); // Вызываем функцию для получения данных
   }, [class_id]);
+
+  useEffect(() => {
+    // Функция для получения данных из API
+    const fetchDataв = async () => {
+      try {
+        const response = await fetch(
+          `http://okalbm.ru/api/single_class/get_photosessions/${class_id}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setPhotosessions(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDataв(); // Вызываем функцию для получения данных
+  }, []);
+
   if (isLoading) {
     return (
       <div
@@ -292,6 +361,7 @@ export default function Class() {
       </div>
     );
   }
+
   return (
     <>
       <div className="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -376,7 +446,9 @@ export default function Class() {
               <div className="d-flex justify-content-between">
                 <Card.Title className="mb-2">
                   <div className="d-flex align-items-center">
-                    <span style={{ fontSize: "14px" }}>Детали заказа</span>
+                    <span style={{ fontSize: "14px" }}>
+                      Детали заказа (ДОДУМАТЬ)
+                    </span>
                   </div>
                 </Card.Title>
                 <div>
@@ -427,20 +499,50 @@ export default function Class() {
         <Col sm={4}>
           <Card>
             <Card.Body>
-              <Card.Title>Фотосъемки</Card.Title>
+              <div className="d-flex justify-content-between">
+                <Card.Title className="mb-2">
+                  <div className="d-flex align-items-center">
+                    <span style={{ fontSize: "14px" }}>Фотосъемки</span>
+                  </div>
+                </Card.Title>
+                <div>
+                  <Button
+                    variant="light"
+                    size="sm"
+                    onClick={() =>
+                      controlFormData("addPhotosession", content[0])
+                    }
+                  >
+                    {" "}
+                    <i className="bi bi-plus-lg"></i>{" "}
+                  </Button>
+                </div>
+              </div>
               <ul>
-                <li>
-                  Уличная -
-                  {content[0]?.School ? content[0].School : "Не заполнено"}
-                </li>
-                <li>
-                  Школьная -
-                  {content[0]?.School ? content[0].School : "Не заполнено"}
-                </li>
-                <li>
-                  Портретная -
-                  {content[0]?.School ? content[0].School : "Не заполнено"}
-                </li>
+                {photosessions &&
+                  photosessions.map((item) => (
+                    <div className="d-flex justify-content-between">
+                      <li className="mb-2">
+                        <div className="d-flex align-items-center">
+                          <span style={{ fontSize: "14px" }}>
+                            {item.PhTypeId}
+                          </span>
+                        </div>
+                      </li>
+                      <div>
+                        <Button
+                          variant="light"
+                          size="sm"
+                          onClick={() =>
+                            controlFormData("editPhotosession", "ПОКА ПУСТО")
+                          }
+                        >
+                          {" "}
+                          <i className="bi bi-pencil-square"></i>{" "}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
               </ul>
             </Card.Body>
           </Card>
@@ -472,7 +574,9 @@ export default function Class() {
         onHide={() => handleClose()}
         formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={() => editItem(formData, API["Edit"], setContent, handleClose)}
+        onSave={() =>
+          editItem(formData, API["EditMain"], setContent, handleClose)
+        }
       />
 
       <EditOrderModal
@@ -481,6 +585,21 @@ export default function Class() {
         formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
         onSave={() => editItem(formData, API["Edit"], setContent, handleClose)}
+      />
+
+      <AddPhotosessionModal
+        show={show && modalType === "addPhotosession"}
+        onHide={() => handleClose()}
+        formData={formData}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        onSave={() =>
+          addItem(
+            formData,
+            API["AddPhotosession"],
+            setPhotosessions,
+            handleClose
+          )
+        }
       />
     </>
   );
