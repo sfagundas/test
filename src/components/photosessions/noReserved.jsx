@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Card,
   Row,
@@ -14,13 +14,17 @@ import {
   formEdit,
   addItem,
   editItem,
-  toWork,
+  callDate,
   openModal,
 } from "./commonfunction";
 import { Link } from "react-router-dom";
 import OkBadgeDate from "../custom/OkBadgeDate";
 
-export default function noReserved({
+import EditPhotosessionModal from "./modal/EditPhotosessionModal";
+import ReservationModal from "./modal/ReservationModal";
+import CallDateModal from "./modal/CallDateModal";
+
+export default function NoReserved({
   content,
   setContent,
   modalType,
@@ -33,131 +37,118 @@ export default function noReserved({
   return (
     <>
       <Row>
-        <Col sm={6}>
-          <Card
-            className="mb-3 text-body-secondary"
-            style={{ fontSize: "13px" }}
-          >
-            <Card.Body style={{ paddingBottom: "10px" }}>
-              <Row>
-                <Col sm={1}>
-                  <Badge bg="light" text="dark"></Badge>
-                </Col>
+        {content
+          .filter((item) => item.StatusId == 1 || !item.StatusId)
+          .map((item, index) => (
+            <Col sm={12} md={12} lg={10} xl={8} xxl={8}>
+              <Card
+                className="mb-3 text-body-secondary"
+                style={{ fontSize: "13px" }}
+              >
+                <Card.Body style={{ paddingBottom: "16px" }}>
+                  <Row>
+                    <Col xl={1} xxl={1} sm={1} md={1}>
+                      <Badge bg="light" text="dark">
+                        {index + 1}
+                      </Badge>
+                    </Col>
 
-                <Col sm={3}>
-                  <small>33 шк 11В</small>
-                </Col>
-                <Col sm={6}>
-                  <small>Халактырский пляж</small>
-                </Col>
-                <Col sm={2}>
-                  <div className="d-flex justify-content-between">
-                    <div>
-                      <span></span>
-                    </div>
-                    <div>
-                      <Dropdown>
-                        <Dropdown.Toggle
-                          variant="light"
-                          className="btn-sm pt-0 pb-0"
-                          id="dropdown-basic"
-                        ></Dropdown.Toggle>
-                        <Dropdown.Menu>
-                          <Dropdown.Item onClick={123}>
-                            <i className="bi bi-calendar-event me-2"></i>
-                            Дата связи
-                          </Dropdown.Item>
-                          <Dropdown.Item onClick={123}>
-                            <i className="bi bi-calendar-event me-2"></i>
-                            Забронировать
-                          </Dropdown.Item>
+                    <Col xl={2} xxl={2} md={2} sm={5}>
+                      <OkBadgeDate date={"2025-05-20"} />
+                    </Col>
+                    <Col xl={3} xxl={3} md={4} sm={5}>
+                      {item.PhId}
+                    </Col>
+                    <Col xl={4} xxl={4} sm={8} md={3}>
+                      <small>{item.Location}</small>
+                    </Col>
+                    <Col xl={2} xxl={2} sm={4} md={2}>
+                      <div className="d-flex justify-content-between">
+                        <div>
+                          <span>
+                            {item.PhTypeId == 1 ? (
+                              <i className="bi bi-images"></i>
+                            ) : item.PhTypeId == 14 ? (
+                              <i className="bi bi-camera"></i>
+                            ) : item.PhTypeId == 15 ? (
+                              <i className="bi bi-collection"></i>
+                            ) : null}
+                          </span>
+                        </div>
+                        <div>
+                          <Dropdown>
+                            <Dropdown.Toggle
+                              variant="light"
+                              className="btn-sm pt-0 pb-0"
+                              id="dropdown-basic"
+                            ></Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item
+                                onClick={() =>
+                                  controlFormData("callDate", item)
+                                }
+                              >
+                                <i className="bi bi-calendar-event me-2"></i>
+                                Дата связи
+                              </Dropdown.Item>
+                              <Dropdown.Item
+                                onClick={() =>
+                                  controlFormData("reservationModal", item)
+                                }
+                              >
+                                <i className="bi bi-calendar-check me-2"></i>
+                                Забронировать
+                              </Dropdown.Item>
 
-                          <Dropdown.Item onClick={123}>
-                            <i className="bi bi-calendar-event me-2"></i>
-                            Редактировать
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <OkBadgeDate date={"2025-05-20"} />
-              </Row>
-            </Card.Body>
-          </Card>
-        </Col>
+                              <Dropdown.Item
+                                onClick={() =>
+                                  controlFormData("editPhotosessionModal", item)
+                                }
+                              >
+                                <i className="bi bi-pencil-square me-2"></i>
+                                Редактировать
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
       </Row>
-      {content
-        .filter((item) => item.StatusId == 1 || !item.StatusId)
-        .map((item) => (
-          <Col sm={6}>
-            <Card
-              className="mb-3 text-body-secondary"
-              style={{ fontSize: "13px" }}
-            >
-              <Card.Body style={{ paddingBottom: "10px" }}>
-                <Row>
-                  <Col sm={1}>
-                    <Badge bg="light" text="dark">
-                      1
-                    </Badge>
-                  </Col>
 
-                  <Col sm={3}>
-                    <small>33 шк 11В</small>
-                  </Col>
-                  <Col sm={6}>
-                    <small>Халактырский пляж</small>
-                  </Col>
-                  <Col sm={2}>
-                    <div className="d-flex justify-content-between">
-                      <div>
-                        <span>
-                          {item.PhTypeId == 1 ? (
-                            <i className="bi bi-images"></i>
-                          ) : item.PhTypeId == 14 ? (
-                            <i className="bi bi-camera"></i>
-                          ) : item.PhTypeId == 15 ? (
-                            <i className="bi bi-collection"></i>
-                          ) : null}
-                        </span>
-                      </div>
-                      <div>
-                        <Dropdown>
-                          <Dropdown.Toggle
-                            variant="light"
-                            className="btn-sm pt-0 pb-0"
-                            id="dropdown-basic"
-                          ></Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item onClick={123}>
-                              <i className="bi bi-calendar-event me-2"></i>
-                              Дата связи
-                            </Dropdown.Item>
-                            <Dropdown.Item onClick={123}>
-                              <i className="bi bi-calendar-event me-2"></i>
-                              Забронировать
-                            </Dropdown.Item>
+      <CallDateModal
+        show={show && modalType === "callDate"}
+        onHide={() => handleClose()}
+        formData={formData}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        onSave={() =>
+          callDate(formData, API["CallDate"], setContent, handleClose)
+        }
+      />
 
-                            <Dropdown.Item onClick={123}>
-                              <i className="bi bi-calendar-event me-2"></i>
-                              Редактировать
-                            </Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <OkBadgeDate date={"2025-05-20"} />
-                </Row>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
+      <ReservationModal
+        show={show && modalType === "reservationModal"}
+        onHide={() => handleClose()}
+        formData={formData}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        onSave={() =>
+          callDate(formData, API["Reservation"], setContent, handleClose)
+        }
+      />
+
+      <EditPhotosessionModal
+        show={show && modalType === "editPhotosessionModal"}
+        onHide={() => handleClose()}
+        formData={formData}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        onSave={() =>
+          callDate(formData, API["EditPhotosession"], setContent, handleClose)
+        }
+      />
     </>
   );
 }

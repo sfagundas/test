@@ -1,14 +1,26 @@
 import React from "react";
 
-import { Row, Col, Card, Spinner, Nav, Badge, Tab } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Card,
+  Spinner,
+  Nav,
+  Badge,
+  Tab,
+  Button,
+  Modal,
+  Dropdown,
+  Form,
+} from "react-bootstrap";
 import { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
 import { openModal } from "./photosessions/commonfunction";
 
-import NoReserved from "./photosessions/noReserved";
+import NoReserved from "./photosessions/NoReserved";
 import Reserved from "./photosessions/Reserved";
-import Complete from "./photosessions/completed";
+import Completed from "./photosessions/Completed";
 
 function AllPhotosessions() {
   const formDataContent = {
@@ -86,8 +98,10 @@ function AllPhotosessions() {
   const controlFormData = (type, data) => {
     setModalType(type);
 
-    if (type === "add") {
-      setFD();
+    if (type === "callDate") {
+      setFormData({
+        Id: data.PhId,
+      });
     }
 
     openModal(type, setShow);
@@ -172,7 +186,7 @@ function AllPhotosessions() {
                 />
               </Tab.Pane>
               <Tab.Pane eventKey="Completed" title="Completed">
-                <Complete
+                <Completed
                   content={content}
                   setContent={setContent}
                   modalType={modalType}

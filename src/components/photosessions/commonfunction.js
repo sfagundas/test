@@ -3,6 +3,8 @@
 export const API = {
   EditMain: "edit_main_info",
   AddPhotosession: "add_photosession",
+  CallDate: "editCallDate",
+  Reservation: "add_reservation",
 };
 
 export const formEdit = (e, setFormData) => {
@@ -111,7 +113,7 @@ export const deleteItem = async (formData, api, setItems, handleClose) => {
   }
 };
 
-export const toWork = async (formData, api, setItems, handleClose) => {
+export const callDate = async (formData, api, setItems, handleClose) => {
   try {
     // Отправляем запрос на сервер для удаления
     const response = await fetch(

@@ -11,7 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import OkBadgeDate from "../custom/OkBadgeDate";
 
-export default function noReserved({
+export default function Reserved({
   content,
   setContent,
   modalType,
