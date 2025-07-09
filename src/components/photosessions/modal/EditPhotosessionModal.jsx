@@ -15,23 +15,64 @@ const EditPhotosessionModal = ({
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Редактироват съемку</Modal.Title>
+        <Modal.Title>Редактировать съемку</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <input type="hidden" name="Id" value={formData.Id} />
           <Row>
-            <Col sm={12}>
+            <Col sm={6}>
               <Form.Group className="mb-3" controlId="CallDate">
-                <Form.Label>Некое поле</Form.Label>
+                <Form.Label>Тип съемки</Form.Label>
                 <Form.Control
                   type="text"
                   name="CallDate"
-                  placeholder="2025-04-23"
+                  placeholder=""
                   onChange={onFormChange}
                   value={formData.CallDate}
                   aria-describedby="inputCallDatePrepend"
                   required
+                />
+              </Form.Group>
+            </Col>
+            <Col sm={6}>
+              <Form.Group className="mb-3" controlId="CallDate">
+                <Form.Label>Локация</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="CallDate"
+                  placeholder=""
+                  onChange={onFormChange}
+                  value={formData.CallDate}
+                  aria-describedby="inputCallDatePrepend"
+                  required
+                />
+              </Form.Group>
+            </Col>
+            <Col sm={6}>
+              <Form.Group className="mb-3" controlId="CallDate">
+                <Form.Label>Фотограф</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="CallDate"
+                  placeholder=""
+                  onChange={onFormChange}
+                  value={formData.CallDate}
+                  aria-describedby="inputCallDatePrepend"
+                  required
+                />
+              </Form.Group>
+            </Col>
+            <Col sm={6}>
+              <Form.Group className="mb-3" controlId="CallDate">
+                <Form.Label>Оплата</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="CallDate"
+                  placeholder=""
+                  onChange={onFormChange}
+                  value={formData.CallDate}
+                  aria-describedby="inputCallDatePrepend"
                 />
               </Form.Group>
             </Col>

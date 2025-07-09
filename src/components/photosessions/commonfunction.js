@@ -3,7 +3,7 @@
 export const API = {
   EditMain: "edit_main_info",
   AddPhotosession: "add_photosession",
-  CallDate: "editCallDate",
+  CallDate: "edit_call_date",
   Reservation: "add_reservation",
 };
 
@@ -17,7 +17,7 @@ export const formEdit = (e, setFormData) => {
 
 export const addItem = async (formData, api, setItems, handleClose) => {
   try {
-    const response = await fetch(`http://okalbm.ru/api/single_class/${api}`, {
+    const response = await fetch(`http://okalbm.ru/api/photosessions/${api}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export const editItem = async (formData, api, setItems, handleClose) => {
   try {
     // Отправляем данные на сервер для обновления
     const response = await fetch(
-      `http://okalbm.ru/api/single_class/${api}/${formData.Id}`,
+      `http://okalbm.ru/api/photosessions/${api}/${formData.Id}`,
       {
         method: "PUT", // или "PATCH", в зависимости от вашего API
         headers: {
@@ -92,7 +92,7 @@ export const deleteItem = async (formData, api, setItems, handleClose) => {
   try {
     // Отправляем запрос на сервер для удаления
     const response = await fetch(
-      `http://okalbm.ru/api/insert/${api}/${formData.Id}`,
+      `http://okalbm.ru/api/photosessions/${api}/${formData.Id}`,
       {
         method: "DELETE", // Используем метод DELETE
       }
@@ -110,31 +110,6 @@ export const deleteItem = async (formData, api, setItems, handleClose) => {
   } catch (error) {
     console.error("Ошибка:", error);
     alert("Не удалось удалить запись: " + error.message);
-  }
-};
-
-export const callDate = async (formData, api, setItems, handleClose) => {
-  try {
-    // Отправляем запрос на сервер для удаления
-    const response = await fetch(
-      `http://okalbm.ru/api/insert/${api}/${formData.Id}`,
-      {
-        method: "put",
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Ошибка при переносе");
-    }
-
-    setItems((prevItems) =>
-      prevItems.filter((item) => item.Id !== formData.Id)
-    );
-
-    handleClose();
-  } catch (error) {
-    console.error("Ошибка:", error);
-    alert("Не удалось перенести запись: " + error.message);
   }
 };
 

@@ -111,31 +111,6 @@ export const deleteItem = async (formData, api, setItems, handleClose) => {
   }
 };
 
-export const toWork = async (formData, api, setItems, handleClose) => {
-  try {
-    // Отправляем запрос на сервер для удаления
-    const response = await fetch(
-      `http://okalbm.ru/api/insert/${api}/${formData.Id}`,
-      {
-        method: "put",
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Ошибка при переносе");
-    }
-
-    setItems((prevItems) =>
-      prevItems.filter((item) => item.Id !== formData.Id)
-    );
-
-    handleClose();
-  } catch (error) {
-    console.error("Ошибка:", error);
-    alert("Не удалось перенести запись: " + error.message);
-  }
-};
-
 export const openModal = (type, setShow) => {
   setShow(true);
 };

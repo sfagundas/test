@@ -1,4 +1,5 @@
 import { Row, Col, Button, Modal, Form } from "react-bootstrap";
+import { useState } from "react";
 
 const CallDateModal = ({ show, onHide, formData, onFormChange, onSave }) => {
   const handleSubmit = (e) => {
@@ -16,16 +17,13 @@ const CallDateModal = ({ show, onHide, formData, onFormChange, onSave }) => {
           <input type="hidden" name="Id" value={formData.Id} />
           <Row>
             <Col sm={12}>
-              <Form.Group className="mb-3" controlId="CallDate">
-                <Form.Label>Дата</Form.Label>
+              <Form.Group controlId="CallDate" className="mb-3">
+                <Form.Label>Выберите дату</Form.Label>
                 <Form.Control
-                  type="text"
+                  type="date"
                   name="CallDate"
-                  placeholder="2025-04-23"
-                  onChange={onFormChange}
                   value={formData.CallDate}
-                  aria-describedby="inputCallDatePrepend"
-                  required
+                  onChange={onFormChange}
                 />
               </Form.Group>
             </Col>

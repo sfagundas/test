@@ -17,7 +17,6 @@ import {
   callDate,
   openModal,
 } from "./commonfunction";
-import { Link } from "react-router-dom";
 import OkBadgeDate from "../custom/OkBadgeDate";
 
 import EditPhotosessionModal from "./modal/EditPhotosessionModal";
@@ -54,10 +53,10 @@ export default function NoReserved({
                     </Col>
 
                     <Col xl={2} xxl={2} md={2} sm={5}>
-                      <OkBadgeDate date={"2025-05-20"} />
+                      <OkBadgeDate date={item.CallDate} />
                     </Col>
                     <Col xl={3} xxl={3} md={4} sm={5}>
-                      {item.PhId}
+                      {item.ClientName}
                     </Col>
                     <Col xl={4} xxl={4} sm={8} md={3}>
                       <small>{item.Location}</small>
@@ -126,7 +125,7 @@ export default function NoReserved({
         formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
         onSave={() =>
-          callDate(formData, API["CallDate"], setContent, handleClose)
+          editItem(formData, API["CallDate"], setContent, handleClose)
         }
       />
 
@@ -136,7 +135,7 @@ export default function NoReserved({
         formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
         onSave={() =>
-          callDate(formData, API["Reservation"], setContent, handleClose)
+          editItem(formData, API["Reservation"], setContent, handleClose)
         }
       />
 
@@ -146,7 +145,7 @@ export default function NoReserved({
         formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
         onSave={() =>
-          callDate(formData, API["EditPhotosession"], setContent, handleClose)
+          editItem(formData, API["EditPhotosession"], setContent, handleClose)
         }
       />
     </>

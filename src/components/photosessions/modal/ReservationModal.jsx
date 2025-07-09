@@ -15,17 +15,37 @@ const ReservationModal = ({ show, onHide, formData, onFormChange, onSave }) => {
         <Form onSubmit={handleSubmit}>
           <input type="hidden" name="Id" value={formData.Id} />
           <Row>
-            <Col sm={12}>
-              <Form.Group className="mb-3" controlId="CallDate">
-                <Form.Label>Дата брони</Form.Label>
+            <Col sm={6}>
+              <Form.Group controlId="CallDate" className="mb-3">
+                <Form.Label>Выберите дату</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="CallDate"
+                  value={formData.CallDate}
+                  onChange={onFormChange}
+                />
+              </Form.Group>
+            </Col>
+            <Col sm={6}>
+              <Form.Group controlId="Photographer" className="mb-3">
+                <Form.Label>Фотограф</Form.Label>
                 <Form.Control
                   type="text"
-                  name="CallDate"
-                  placeholder="2025-04-23"
-                  onChange={onFormChange}
+                  name="Photographer"
                   value={formData.CallDate}
-                  aria-describedby="inputCallDatePrepend"
-                  required
+                  onChange={onFormChange}
+                />
+              </Form.Group>
+            </Col>
+
+            <Col sm={6}>
+              <Form.Group controlId="Photographer" className="mb-3">
+                <Form.Label>Контактное лицо</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="Photographer"
+                  value={formData.CallDate}
+                  onChange={onFormChange}
                 />
               </Form.Group>
             </Col>

@@ -25,9 +25,8 @@ import Completed from "./photosessions/Completed";
 function AllPhotosessions() {
   const formDataContent = {
     Id: "",
-    ClientName: "",
-    Phone: "",
-    CityId: "",
+    PhId: "",
+    CallDate: "",
   };
 
   const [content, setContent] = useState([]);
@@ -100,8 +99,11 @@ function AllPhotosessions() {
 
     if (type === "callDate") {
       setFormData({
-        Id: data.PhId,
+        Id: data.Id,
+        CallDate: data.CallDate,
       });
+    } else if (type === "reservationModal") {
+    } else if (type === "editPhotosessionModal") {
     }
 
     openModal(type, setShow);
