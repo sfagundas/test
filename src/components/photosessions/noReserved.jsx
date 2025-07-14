@@ -53,7 +53,7 @@ export default function NoReserved({
                     </Col>
 
                     <Col xl={2} xxl={2} md={2} sm={5}>
-                      <OkBadgeDate date={item.CallDate} />
+                      {/* <OkBadgeDate date={item.CallDate} /> */}
                     </Col>
                     <Col xl={3} xxl={3} md={4} sm={5}>
                       {item.ClientName}
@@ -118,7 +118,6 @@ export default function NoReserved({
             </Col>
           ))}
       </Row>
-
       <CallDateModal
         show={show && modalType === "callDate"}
         onHide={() => handleClose()}
@@ -128,7 +127,6 @@ export default function NoReserved({
           editItem(formData, API["CallDate"], setContent, handleClose)
         }
       />
-
       <ReservationModal
         show={show && modalType === "reservationModal"}
         onHide={() => handleClose()}
@@ -138,7 +136,6 @@ export default function NoReserved({
           editItem(formData, API["Reservation"], setContent, handleClose)
         }
       />
-
       <EditPhotosessionModal
         show={show && modalType === "editPhotosessionModal"}
         onHide={() => handleClose()}
