@@ -1,6 +1,15 @@
 import React from "react";
 
 import {
+  API,
+  formEdit,
+  addItem,
+  editItem,
+  callDate,
+  openModal,
+} from "./photosessions/commonfunction";
+
+import {
   Row,
   Col,
   Card,
@@ -16,11 +25,12 @@ import {
 import { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
-import { openModal } from "./photosessions/commonfunction";
 
 import NoReserved from "./photosessions/NoReserved";
 import Reserved from "./photosessions/Reserved";
 import Completed from "./photosessions/Completed";
+
+import UniversalModalForm from "./forms/UniversalModalForm";
 
 function AllPhotosessions() {
   const formDataContent = {
@@ -109,6 +119,26 @@ function AllPhotosessions() {
     openModal(type, setShow);
   };
 
+  const callDate = [
+    { name: "CallDate", label: "Дата", type: "date", required: true },
+  ];
+  const reservationModal = [
+    { name: "Date", label: "Дата", type: "date", required: true },
+    { name: "Photographer", label: "Фотограф", type: "text", required: true },
+    {
+      name: "ContactName",
+      label: "ФИО Контакта",
+      type: "text",
+      required: true,
+    },
+    { name: "Phone", label: "Номер", type: "text" },
+  ];
+  const editPhotosessionModal = [
+    { name: "PhType", label: "Тип съемки", type: "text", required: true },
+    { name: "Location", label: "Локация", type: "text", required: true },
+    { name: "Price", label: "Оплата", type: "text" },
+  ];
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -166,43 +196,59 @@ function AllPhotosessions() {
               <Tab.Pane eventKey="noReserved" title="noReserved">
                 <NoReserved
                   content={content}
-                  setContent={setContent}
-                  modalType={modalType}
-                  show={show}
-                  setFormData={setFormData}
-                  handleClose={handleClose}
                   controlFormData={controlFormData}
-                  formData={formData}
                 />
               </Tab.Pane>
               <Tab.Pane eventKey="Reserved" title="Reserved">
-                <Reserved
-                  content={content}
-                  setContent={setContent}
-                  modalType={modalType}
-                  show={show}
-                  setFormData={setFormData}
-                  handleClose={handleClose}
-                  controlFormData={controlFormData}
-                  formData={formData}
-                />
+                <Reserved content={content} controlFormData={controlFormData} />
               </Tab.Pane>
               <Tab.Pane eventKey="Completed" title="Completed">
                 <Completed
                   content={content}
-                  setContent={setContent}
-                  modalType={modalType}
-                  show={show}
-                  setFormData={setFormData}
-                  handleClose={handleClose}
                   controlFormData={controlFormData}
-                  formData={formData}
                 />
               </Tab.Pane>
             </Tab.Content>
           </Col>
         </Row>
       </Tab.Container>
+
+      <UniversalModalForm
+        show={show && modalType === "callDate"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Дата связи"
+        fields={callDate}
+        onSubmit={() =>
+          editItem(formData, API["CallDate"], setContent, handleClose)
+        }
+        submitButtonText="Сохранить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "reservationModal"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Забронировать"
+        fields={reservationModal}
+        onSubmit={() =>
+          editItem(formData, API["Reservation"], setContent, handleClose)
+        }
+        submitButtonText="Сохранить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "editPhotosessionModal"}
+        onHide={() => handleClose()}
+        formData={formData}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        title="Редактировать съемку"
+        fields={editPhotosessionModal}
+        onSubmit={() =>
+          editItem(formData, API["EditMain"], setContent, handleClose)
+        }
+        submitButtonText="Сохранить"
+      />
     </>
   );
 }

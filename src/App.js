@@ -12,6 +12,7 @@ const AllClasses = lazy(() => import("./components/AllClasses"));
 const AllPhotosessions = lazy(() => import("./components/Photosessions"));
 const Directory = lazy(() => import("./components/Directory"));
 const SingleClass = lazy(() => import("./components/SingleClass"));
+const Test = lazy(() => import("./components/Test"));
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
                   <Route path="/classes" element={<AllClasses />} />
                   <Route path="/photo" element={<AllPhotosessions />} />
                   <Route path="/directory" element={<Directory />} />
+                  <Route path="/test" element={<Test />} />
                   <Route
                     path="classes/single_class/:class_id"
                     element={<SingleClass />}

@@ -1,38 +1,7 @@
-import { useState } from "react";
-import {
-  Card,
-  Row,
-  Col,
-  Button,
-  Modal,
-  Dropdown,
-  Form,
-  Badge,
-} from "react-bootstrap";
-import {
-  API,
-  formEdit,
-  addItem,
-  editItem,
-  callDate,
-  openModal,
-} from "./commonfunction";
+import { Card, Row, Col, Button, Dropdown, Badge } from "react-bootstrap";
 import OkBadgeDate from "../custom/OkBadgeDate";
 
-import EditPhotosessionModal from "./modal/EditPhotosessionModal";
-import ReservationModal from "./modal/ReservationModal";
-import CallDateModal from "./modal/CallDateModal";
-
-export default function NoReserved({
-  content,
-  setContent,
-  modalType,
-  show,
-  setFormData,
-  handleClose,
-  controlFormData,
-  formData,
-}) {
+export default function NoReserved({ content, controlFormData }) {
   return (
     <>
       <Row>
@@ -53,7 +22,7 @@ export default function NoReserved({
                     </Col>
 
                     <Col xl={2} xxl={2} md={2} sm={5}>
-                      {/* <OkBadgeDate date={item.CallDate} /> */}
+                      <OkBadgeDate date={item.CallDate} />
                     </Col>
                     <Col xl={3} xxl={3} md={4} sm={5}>
                       {item.ClientName}
@@ -118,33 +87,6 @@ export default function NoReserved({
             </Col>
           ))}
       </Row>
-      <CallDateModal
-        show={show && modalType === "callDate"}
-        onHide={() => handleClose()}
-        formData={formData}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={() =>
-          editItem(formData, API["CallDate"], setContent, handleClose)
-        }
-      />
-      <ReservationModal
-        show={show && modalType === "reservationModal"}
-        onHide={() => handleClose()}
-        formData={formData}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={() =>
-          editItem(formData, API["Reservation"], setContent, handleClose)
-        }
-      />
-      <EditPhotosessionModal
-        show={show && modalType === "editPhotosessionModal"}
-        onHide={() => handleClose()}
-        formData={formData}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={() =>
-          editItem(formData, API["EditPhotosession"], setContent, handleClose)
-        }
-      />
     </>
   );
 }

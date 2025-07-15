@@ -1,38 +1,6 @@
-import React, { useState } from "react";
-import {
-  Card,
-  Row,
-  Col,
-  Button,
-  Modal,
-  Dropdown,
-  Badge,
-} from "react-bootstrap";
-import {
-  API,
-  formEdit,
-  addItem,
-  editItem,
-  toWork,
-  openModal,
-} from "./commonfunction";
-import { Link } from "react-router-dom";
+import { Card, Row, Col, Dropdown, Badge } from "react-bootstrap";
 import OkBadgeDate from "../custom/OkBadgeDate";
-
-import EditPhotosessionModal from "./modal/EditPhotosessionModal";
-import ReservationModal from "./modal/ReservationModal";
-import CallDateModal from "./modal/CallDateModal";
-
-export default function Completed({
-  content,
-  setContent,
-  modalType,
-  show,
-  setFormData,
-  handleClose,
-  controlFormData,
-  formData,
-}) {
+export default function Completed({ content, controlFormData }) {
   return (
     <>
       <Row>
@@ -118,36 +86,6 @@ export default function Completed({
             </Col>
           ))}
       </Row>
-
-      <CallDateModal
-        show={show && modalType === "callDate"}
-        onHide={() => handleClose()}
-        formData={formData}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={() =>
-          editItem(formData, API["CallDate"], setContent, handleClose)
-        }
-      />
-
-      <ReservationModal
-        show={show && modalType === "reservationModal"}
-        onHide={() => handleClose()}
-        formData={formData}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={() =>
-          editItem(formData, API["Reservation"], setContent, handleClose)
-        }
-      />
-
-      <EditPhotosessionModal
-        show={show && modalType === "editPhotosessionModal"}
-        onHide={() => handleClose()}
-        formData={formData}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={() =>
-          editItem(formData, API["EditPhotosession"], setContent, handleClose)
-        }
-      />
     </>
   );
 }
