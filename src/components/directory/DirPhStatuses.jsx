@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  Row,
-  Col,
-  Button,
-  Modal,
-  Dropdown,
-  Form,
-  InputGroup,
-} from "react-bootstrap";
+import { Card, Row, Col, Button, Modal, Dropdown } from "react-bootstrap";
 import {
   formEdit,
   addItem,
@@ -19,78 +10,7 @@ import {
   fetchContent,
 } from "./commonfunction";
 
-// Компонент AddEditModal
-const AddEditModal = ({
-  show,
-  onHide,
-  formData,
-  onFormChange,
-  onSave,
-  isEditMode,
-}) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave();
-  };
-
-  return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>
-          {isEditMode ? "Редактировать статус" : "Добавить статус"}
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <input type="hidden" name="Id" value={formData.Id} />
-          <Row>
-            <Col sm={12}>
-              <Form.Group className="mb-3" controlId="Value">
-                <Form.Label>Статус</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text id="inputValuePrepend">
-                    <i className="bi bi-card-list"></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="text"
-                    name="Value"
-                    placeholder="Название"
-                    onChange={onFormChange}
-                    value={formData.Value}
-                    aria-describedby="inputValuePrepend"
-                    required
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
-            <Col sm={12}>
-              <Form.Group className="mb-3" controlId="Comment">
-                <Form.Label>Комментарий</Form.Label>
-                <Form.Control
-                  aria-describedby="inputCommentPrepend"
-                  type="text"
-                  name="Comment"
-                  as="textarea"
-                  placeholder="Описание"
-                  onChange={onFormChange}
-                  value={formData.Comment}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={onHide}>
-              Отмена
-            </Button>
-            <Button variant="warning" type="submit">
-              {isEditMode ? "Сохранить" : "Добавить"}
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  );
-};
+import UniversalModalForm from "../forms/UniversalModalForm";
 
 const DeleteRecoverModal = ({ show, onHide, onConfirm, isRecover }) => {
   return (
@@ -182,6 +102,20 @@ export default function PhStatuses() {
 
     openModal(type, setShow);
   };
+
+  const addEditPhStatuses = [
+    {
+      name: "Value",
+      label: "Статус",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "Comment",
+      label: "Комментарий",
+      type: "textarea",
+    },
+  ];
 
   return (
     <>
@@ -277,17 +211,27 @@ export default function PhStatuses() {
           ))}
       </Row>
 
-      <AddEditModal
-        show={show && (modalType === "add" || modalType === "edit")}
+      <UniversalModalForm
+        show={show && modalType === "add"}
         onHide={() => handleClose()}
-        formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={
-          modalType === "add"
-            ? () => addItem(formData, API["Add"], setContent, handleClose) //ДОКУМЕНТ
-            : () => editItem(formData, API["Edit"], setContent, handleClose) //ДОКУМЕНТ
+        formData={formData}
+        title="Добавить статус"
+        fields={addEditPhStatuses}
+        onSubmit={() => addItem(formData, API["Add"], setContent, handleClose)}
+        submitButtonText="Добавить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "edit"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Редактировать статус"
+        fields={addEditPhStatuses}
+        onSubmit={() =>
+          editItem(formData, API["Edit"], setContent, handleClose)
         }
-        isEditMode={modalType === "edit"}
+        submitButtonText="Сохранить"
       />
 
       <DeleteRecoverModal

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { Spinner } from "react-bootstrap";
 
-const CitySelect = ({ id, onChange }) => {
+const CitySelect = ({ value, onChange }) => {
   // Деструктурируем id из props
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,6 @@ const CitySelect = ({ id, onChange }) => {
   if (loading) {
     return (
       <div>
-        Город <br></br>
         <Spinner animation="border" variant="primary" style={{}} />
       </div>
     );
@@ -43,9 +42,6 @@ const CitySelect = ({ id, onChange }) => {
   return (
     <>
       <div className={`mb-3`}>
-        <label htmlFor="CityId" className="form-label">
-          Город
-        </label>
         <select
           className="form-control"
           name="CityId"
@@ -59,7 +55,7 @@ const CitySelect = ({ id, onChange }) => {
             <option
               key={city.Id}
               value={city.Id}
-              selected={city.Id === id} // Устанавливаем selected, если id совпадает
+              selected={city.Id === value} // Устанавливаем selected, если id совпадает
             >
               {city.Name}
             </option>

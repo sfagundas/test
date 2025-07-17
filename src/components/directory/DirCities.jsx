@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  Row,
-  Col,
-  Button,
-  Modal,
-  Dropdown,
-  Form,
-  InputGroup,
-} from "react-bootstrap";
+import { Card, Row, Col, Button, Modal, Dropdown } from "react-bootstrap";
 import {
   formEdit,
   addItem,
@@ -19,85 +10,8 @@ import {
   fetchContent,
 } from "./commonfunction"; // ШАБЛОН
 
-// Компонент AddEditModal МОДАЛКА
-const AddEditModal = ({
-  show,
-  onHide,
-  formData,
-  onFormChange,
-  onSave,
-  isEditMode,
-}) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave();
-  };
+import UniversalModalForm from "../forms/UniversalModalForm";
 
-  return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>
-          {isEditMode ? "Редактировать город" : "Добавить город"}
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <input type="hidden" name="Id" value={formData.Id} />
-          <Row>
-            <Col sm={12}>
-              <Form.Group className="mb-3" controlId="Name">
-                <Form.Label>Город</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text id="inputNamePrepend">
-                    <i className="bi bi-house-fill"></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="text"
-                    name="Name"
-                    placeholder="Название"
-                    onChange={onFormChange}
-                    value={formData.Name}
-                    aria-describedby="inputNamePrepend"
-                    required
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
-            <Col sm={12}>
-              <Form.Group className="mb-3" controlId="NameSm">
-                <Form.Label>Сокращение</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text id="inputNameSmPrepend">
-                    <i className="bi bi-house-door"></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="text"
-                    name="NameSm"
-                    placeholder="Короткое название"
-                    onChange={onFormChange}
-                    value={formData.NameSm}
-                    aria-describedby="inputNameSmPrepend"
-                    required
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={onHide}>
-              Отмена
-            </Button>
-            <Button variant="warning" type="submit">
-              {isEditMode ? "Сохранить" : "Добавить"}
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  );
-};
-
-// Компонент DeleteModal МОДАЛКА
 const DeleteRecoverModal = ({ show, onHide, onConfirm, isRecover }) => {
   return (
     <Modal show={show} onHide={onHide}>
@@ -197,6 +111,23 @@ export default function DirCities() {
     openModal(type, setShow);
   };
 
+  const addEditCity = [
+    {
+      name: "Name",
+      label: "Название города",
+      type: "text",
+      required: true,
+      colSize: 8,
+    },
+    {
+      name: "NameSm",
+      label: "Сокращение",
+      type: "text",
+      required: true,
+      colSize: 4,
+    },
+  ];
+
   return (
     <>
       <Button
@@ -278,17 +209,27 @@ export default function DirCities() {
           ))}
       </Row>
 
-      <AddEditModal
-        show={show && (modalType === "add" || modalType === "edit")}
+      <UniversalModalForm
+        show={show && modalType === "add"}
         onHide={() => handleClose()}
-        formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={
-          modalType === "add"
-            ? () => addItem(formData, API["Add"], setContent, handleClose)
-            : () => editItem(formData, API["Edit"], setContent, handleClose)
+        formData={formData}
+        title="Добавить город"
+        fields={addEditCity}
+        onSubmit={() => addItem(formData, API["Add"], setContent, handleClose)}
+        submitButtonText="Добавить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "edit"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Изменить город"
+        fields={addEditCity}
+        onSubmit={() =>
+          editItem(formData, API["Edit"], setContent, handleClose)
         }
-        isEditMode={modalType === "edit"}
+        submitButtonText="Сохранить"
       />
 
       <DeleteRecoverModal
@@ -315,6 +256,30 @@ export default function DirCities() {
                 )
         }
       />
+      {/* <UniversalModalForm
+        show={show && modalType === "edit"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Удалить город"
+        fields={addEditCity}
+        onSubmit={() =>
+          deleteItem(formData, API["Delete"], setContent, handleClose)
+        }
+        submitButtonText="Изменить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "edit"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Восстановить город"
+        fields={addEditCity}
+        onSubmit={() =>
+          editItem(formData, API["Recover"], setContent, handleClose)
+        }
+        submitButtonText="Изменить"
+      /> */}
     </>
   );
 }

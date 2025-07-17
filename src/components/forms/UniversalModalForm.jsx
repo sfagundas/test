@@ -1,6 +1,5 @@
-import React from "react";
 import { Modal } from "react-bootstrap";
-import UniversalModal from "./UniversalModal";
+import UniversalModal from "./UniversalForm";
 
 const UniversalModalForm = ({
   show,

@@ -7,7 +7,19 @@ import Good from "./crm/Good";
 import Bad from "./crm/Bad";
 import Documents from "./crm/Documents";
 
-import { openModal } from "./crm/commonfunction";
+import UniversalModalForm from "./forms/UniversalModalForm";
+import DeleteModal from "./crm/Forms/DeleteModal";
+import ToWorkModal from "./crm/Forms/ToWorkModal";
+
+import {
+  API,
+  formEdit,
+  addItem,
+  editItem,
+  deleteItem,
+  toWork,
+  openModal,
+} from "./crm/commonfunction";
 
 const CRM = () => {
   const [content, setContent] = useState([]);
@@ -27,6 +39,40 @@ const CRM = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const addEditClassForm = [
+    {
+      name: "ClientName",
+      label: "Клиент",
+      type: "text",
+      required: true,
+      colSize: 6,
+    },
+    {
+      name: "Phone",
+      label: "Телефон",
+      type: "text",
+      required: true,
+      colSize: 6,
+    },
+    { name: "CityId", label: "Город", type: "selectCities", required: true },
+  ];
+
+  const editCommentForm = [
+    { name: "ManagerNotes", label: "Изменить комментарий", type: "textarea" },
+  ];
+
+  const callDateForm = [
+    { name: "NextDate", label: "Дата", type: "date", required: true },
+  ];
+
+  const editStatusForm = [
+    {
+      name: "Status",
+      label: "Выбрать статус",
+      type: "selectCrmStatus",
+      required: true,
+    },
+  ];
   const setFD = () => {
     setFormData(formDataContent);
   };
@@ -151,9 +197,7 @@ const CRM = () => {
   }
   return (
     <>
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 className="h2">CRM</h1>
-      </div>
+      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"></div>
 
       <Tab.Container
         id="left-tabs-example"
@@ -279,6 +323,81 @@ const CRM = () => {
           </Col>
         </Row>
       </Tab.Container>
+
+      <UniversalModalForm
+        show={show && modalType === "add"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Добавить класс"
+        fields={addEditClassForm}
+        onSubmit={() => addItem(formData, API["Add"], setContent, handleClose)}
+        submitButtonText="Добавить"
+      />
+
+      <UniversalModalForm
+        show={show && modalType === "edit"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Редактировать класс"
+        fields={addEditClassForm}
+        onSubmit={() =>
+          editItem(formData, API["Edit"], setContent, handleClose)
+        }
+        submitButtonText="Сохранить"
+      />
+
+      <UniversalModalForm
+        show={show && modalType === "comment"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Комментарий менеджера"
+        fields={editCommentForm}
+        onSubmit={() =>
+          editItem(formData, API["EditComment"], setContent, handleClose)
+        }
+        submitButtonText="Сохранить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "date"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Дата связи"
+        fields={callDateForm}
+        onSubmit={() =>
+          editItem(formData, API["EditCrmDate"], setContent, handleClose)
+        }
+        submitButtonText="Сохранить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "status"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Изменить статус"
+        fields={editStatusForm}
+        onSubmit={() =>
+          editItem(formData, API["EditStatus"], setContent, handleClose)
+        }
+        submitButtonText="Сохранить"
+      />
+      <ToWorkModal
+        show={show && modalType === "to_work"}
+        onHide={() => handleClose()}
+        onConfirm={() =>
+          toWork(formData, API["toWork"], setContent, handleClose)
+        }
+      />
+      <DeleteModal
+        show={show && modalType === "delete"}
+        onHide={() => handleClose()}
+        onConfirm={() =>
+          deleteItem(formData, API["Delete"], setContent, handleClose)
+        }
+      />
     </>
   );
 };

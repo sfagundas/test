@@ -38,9 +38,6 @@ const CRMstatusSelect = ({ id, onChange }) => {
   return (
     <>
       <div className={`mb-3`}>
-        <label htmlFor="StatusId" className="form-label">
-          CRM статус
-        </label>
         <select
           className="form-control"
           name="StatusId"

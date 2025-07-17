@@ -38,7 +38,7 @@ export const addItem = async (formData, api, setItems, handleClose) => {
 
     const newItem = {
       Id: String(result.Id),
-      PhTypeId: formData.StatusId,
+      PhTypeId: formData.PhTypeId,
       ClassId: formData.ClassId,
       StatusId: "1",
       // Добавьте остальные обязательные поля, которые есть в других элементах

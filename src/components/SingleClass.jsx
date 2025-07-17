@@ -10,9 +10,9 @@ import {
   Modal,
   Form,
   InputGroup,
+  Dropdown,
 } from "react-bootstrap";
 
-import PhTypeSelect from "./custom/PhTypeSelect";
 import {
   openModal,
   API,
@@ -23,144 +23,12 @@ import {
 
 import { Link } from "react-router-dom";
 
-const EditMainInfoModal = ({
-  show,
-  onHide,
-  formData,
-  onFormChange,
-  onSave,
-}) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave();
-  };
-
-  return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>Редактировать основную информацию</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <input type="hidden" name="Id" value={formData.Id} />
-          <Row>
-            <Col sm={6}>
-              <Form.Group className="mb-3" controlId="School">
-                <Form.Label>Школа</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="School"
-                  placeholder="Пример: 33 школа"
-                  onChange={onFormChange}
-                  value={formData.School}
-                  aria-describedby="inputSchoolPrepend"
-                  required
-                />
-              </Form.Group>
-            </Col>
-            <Col sm={6}>
-              <Form.Group className="mb-3" controlId="Class">
-                <Form.Label>Класс</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="Class"
-                  placeholder="Пример: 11А"
-                  onChange={onFormChange}
-                  value={formData.Class}
-                  aria-describedby="inputClassPrepend"
-                  required
-                />
-              </Form.Group>
-            </Col>
-
-            <Col sm={12}>
-              <Form.Group className="mb-3" controlId="FullSchoolName">
-                <Form.Label>Полное название школы</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="FullSchoolName"
-                  placeholder="Название"
-                  onChange={onFormChange}
-                  value={formData.FullSchoolName}
-                  aria-describedby="inputFullSchoolNamePrepend"
-                  required
-                />
-              </Form.Group>
-            </Col>
-
-            <Col sm={6}>
-              <Form.Group className="mb-3" controlId="ParentName">
-                <Form.Label>ФИО ответственного</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="ParentName"
-                  placeholder="ФИО"
-                  onChange={onFormChange}
-                  value={formData.ParentName}
-                  aria-describedby="inputParentNamePrepend"
-                  required
-                />
-              </Form.Group>
-            </Col>
-
-            <Col sm={6}>
-              <Form.Group className="mb-3" controlId="ParentPhone">
-                <Form.Label>Номер ответственного</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="ParentPhone"
-                  placeholder="*-***-***-**-**"
-                  onChange={onFormChange}
-                  value={formData.ParentPhone}
-                  aria-describedby="inputParentPhonePrepend"
-                  required
-                />
-              </Form.Group>
-            </Col>
-
-            <Col sm={6}>
-              <Form.Group className="mb-3" controlId="TeacherName">
-                <Form.Label>ФИО кл. руководителя</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="TeacherName"
-                  placeholder="ФИО"
-                  onChange={onFormChange}
-                  value={formData.TeacherName}
-                  aria-describedby="inputTeacherNamePrepend"
-                  required
-                />
-              </Form.Group>
-            </Col>
-
-            <Col sm={6}>
-              <Form.Group className="mb-3" controlId="TeacherPhone">
-                <Form.Label>Номер кл. руководителя</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="TeacherPhone"
-                  placeholder="*-***-***-**-**"
-                  onChange={onFormChange}
-                  value={formData.TeacherPhone}
-                  aria-describedby="inputTeacherPhonePrepend"
-                  required
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={onHide}>
-              Отмена
-            </Button>
-            <Button variant="warning" type="submit">
-              Сохранить
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  );
-};
+import UniversalModalForm from "./forms/UniversalModalForm";
+import { editPhotosessionModal } from "./forms/ExportForms";
+import { callDate } from "./forms/ExportForms";
+import { reservationModal } from "./forms/ExportForms";
+import { addPhotosessionForm } from "./forms/ExportForms";
+import { editMainInfoForm } from "./forms/ExportForms";
 
 const EditOrderModal = ({ show, onHide, formData, onFormChange, onSave }) => {
   const handleSubmit = (e) => {
@@ -211,46 +79,6 @@ const EditOrderModal = ({ show, onHide, formData, onFormChange, onSave }) => {
   );
 };
 
-const AddPhotosessionModal = ({
-  show,
-  onHide,
-  formData,
-  onFormChange,
-  onSave,
-}) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave();
-  };
-
-  return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>Добавление съемки</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <input type="hidden" name="ClassId" value={formData.Id} />
-          <input type="hidden" name="StatusId" value={formData.StatusId} />
-          <Row>
-            <Col sm={12}>
-              <PhTypeSelect onChange={onFormChange} />
-            </Col>
-          </Row>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={onHide}>
-              Отмена
-            </Button>
-            <Button variant="warning" type="submit">
-              Добавить
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  );
-};
-
 export default function Class() {
   const { class_id } = useParams();
 
@@ -273,6 +101,14 @@ export default function Class() {
     }
     if (type === "addPhotosession") {
       setFormData({ ClassId: data.Id, StatusId: "1" });
+    }
+    if (type === "callDate") {
+      setFormData({
+        Id: data.Id,
+        CallDate: data.CallDate,
+      });
+    } else if (type === "reservationModal") {
+    } else if (type === "editPhotosessionModal") {
     }
 
     openModal(type, setShow);
@@ -530,16 +366,38 @@ export default function Class() {
                         </div>
                       </li>
                       <div>
-                        <Button
-                          variant="light"
-                          size="sm"
-                          onClick={() =>
-                            controlFormData("editPhotosession", "ПОКА ПУСТО")
-                          }
-                        >
-                          {" "}
-                          <i className="bi bi-pencil-square"></i>{" "}
-                        </Button>
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            variant="light"
+                            className="btn-sm pt-0 pb-0"
+                            id="dropdown-basic"
+                          ></Dropdown.Toggle>
+                          <Dropdown.Menu>
+                            <Dropdown.Item
+                              onClick={() => controlFormData("callDate", item)}
+                            >
+                              <i className="bi bi-calendar-event me-2"></i>
+                              Дата связи
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() =>
+                                controlFormData("reservationModal", item)
+                              }
+                            >
+                              <i className="bi bi-calendar-check me-2"></i>
+                              Забронировать
+                            </Dropdown.Item>
+
+                            <Dropdown.Item
+                              onClick={() =>
+                                controlFormData("editPhotosessionModal", item)
+                              }
+                            >
+                              <i className="bi bi-pencil-square me-2"></i>
+                              Редактировать
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
                       </div>
                     </div>
                   ))}
@@ -569,14 +427,23 @@ export default function Class() {
         </Col>
       </Row>
 
-      <EditMainInfoModal
+      <UniversalModalForm
         show={show && modalType === "editMainInfo"}
         onHide={() => handleClose()}
-        formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={() =>
-          editItem(formData, API["EditMain"], setContent, handleClose)
+        formData={formData}
+        title="Редактировать основную информацию"
+        fields={editMainInfoForm}
+        onSubmit={() =>
+          editItem(
+            formData,
+            API["EditMain"],
+            "single_class",
+            setContent,
+            handleClose
+          )
         }
+        submitButtonText="Сохранить"
       />
 
       <EditOrderModal
@@ -584,22 +451,100 @@ export default function Class() {
         onHide={() => handleClose()}
         formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={() => editItem(formData, API["Edit"], setContent, handleClose)}
+        onSave={() =>
+          editItem(
+            formData,
+            API["Edit"],
+            "single_class",
+            setContent,
+            handleClose
+          )
+        }
       />
+      {/* <UniversalModalForm
+        show={show && modalType === "editOrder"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Редактировать основную информацию"
+        fields={editMainInfoForm}
+        onSubmit={() =>
+          editItem(formData, API["Edit"], setContent, handleClose)
+        }
+        submitButtonText="Сохранить"
+      /> */}
 
-      <AddPhotosessionModal
+      <UniversalModalForm
         show={show && modalType === "addPhotosession"}
         onHide={() => handleClose()}
-        formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={() =>
+        formData={formData}
+        title="Добавление съемки"
+        fields={addPhotosessionForm}
+        onSubmit={() =>
           addItem(
             formData,
             API["AddPhotosession"],
+            "photosessions",
             setPhotosessions,
             handleClose
           )
         }
+        submitButtonText="Добавить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "callDate"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Дата связи"
+        fields={callDate}
+        onSubmit={() =>
+          editItem(
+            formData,
+            API["CallDate"],
+            "photosessions",
+            setContent,
+            handleClose
+          )
+        }
+        submitButtonText="Сохранить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "reservationModal"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Забронировать"
+        fields={reservationModal}
+        onSubmit={() =>
+          editItem(
+            formData,
+            API["Reservation"],
+            "photosessions",
+            setContent,
+            handleClose
+          )
+        }
+        submitButtonText="Сохранить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "editPhotosessionModal"}
+        onHide={() => handleClose()}
+        formData={formData}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        title="Редактировать съемку"
+        fields={editPhotosessionModal}
+        onSubmit={() =>
+          editItem(
+            formData,
+            API["EditMain"],
+            "photosession",
+            setContent,
+            handleClose
+          )
+        }
+        submitButtonText="Сохранить"
       />
     </>
   );

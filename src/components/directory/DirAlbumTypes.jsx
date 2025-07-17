@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  Row,
-  Col,
-  Button,
-  Modal,
-  Dropdown,
-  Form,
-  InputGroup,
-} from "react-bootstrap";
+import { Card, Row, Col, Button, Modal, Dropdown } from "react-bootstrap";
 import {
   formEdit,
   addItem,
@@ -19,106 +10,8 @@ import {
   fetchContent,
 } from "./commonfunction";
 
-// Компонент AddEditModal
-const AddEditModal = ({
-  show,
-  onHide,
-  formData,
-  onFormChange,
-  onSave,
-  isEditMode,
-}) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave();
-  };
+import UniversalModalForm from "../forms/UniversalModalForm";
 
-  return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>
-          {isEditMode ? "Редактировать тип альбома" : "Добавить тип альбома"}
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <input type="hidden" name="Id" value={formData.Id} />
-          <Row>
-            <Col sm={6}>
-              <Form.Group className="mb-3" controlId="Name">
-                <Form.Label>Тип альбома</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text id="inputNamePrepend">
-                    <i className="bi bi-book"></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="text"
-                    name="Name"
-                    placeholder="Название"
-                    onChange={onFormChange}
-                    value={formData.Name}
-                    aria-describedby="inputNamePrepend"
-                    required
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
-            <Col sm={6}>
-              <Form.Group className="mb-3" controlId="Price">
-                <Form.Label>Цена</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text id="inputPricePrepend">
-                    <i className="bi bi-cash"></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="number"
-                    name="Price"
-                    placeholder="Цена"
-                    onChange={onFormChange}
-                    onKeyPress={(e) => {
-                      if (!/[0-9]/.test(e.key) && e.key !== "Backspace") {
-                        e.preventDefault();
-                      }
-                    }}
-                    value={formData.Price}
-                    min="0"
-                    step="1"
-                    aria-describedby="inputPricePrepend"
-                    required
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
-            <Col sm={12}>
-              <Form.Group className="mb-3" controlId="Comment">
-                <Form.Label>Комментарий</Form.Label>
-                <Form.Control
-                  aria-describedby="inputCommentPrepend"
-                  type="text"
-                  name="Comment"
-                  as="textarea"
-                  placeholder="Описание"
-                  onChange={onFormChange}
-                  value={formData.Comment}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={onHide}>
-              Отмена
-            </Button>
-            <Button variant="warning" type="submit">
-              {isEditMode ? "Сохранить" : "Добавить"}
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  );
-};
-
-// Компонент DeleteModal
 const DeleteRecoverModal = ({ show, onHide, onConfirm, isRecover }) => {
   return (
     <Modal show={show} onHide={onHide}>
@@ -211,6 +104,28 @@ export default function DirAlbumTypes() {
     openModal(type, setShow);
   };
 
+  const addEditAlbumTypes = [
+    {
+      name: "Name",
+      label: "Тип альбома",
+      type: "text",
+      required: true,
+      colSize: 6,
+    },
+    {
+      name: "Price",
+      label: "Цена",
+      type: "price",
+      required: true,
+      colSize: 6,
+    },
+    {
+      name: "Comment",
+      label: "Комментарий",
+      type: "textarea",
+    },
+  ];
+
   return (
     <>
       <Button
@@ -220,7 +135,6 @@ export default function DirAlbumTypes() {
       >
         <i className="bi bi-plus-lg"></i>
       </Button>
-
       <Row>
         {content &&
           content.map((item) => (
@@ -323,19 +237,28 @@ export default function DirAlbumTypes() {
           ))}
       </Row>
 
-      <AddEditModal
-        show={show && (modalType === "add" || modalType === "edit")}
+      <UniversalModalForm
+        show={show && modalType === "add"}
         onHide={() => handleClose()}
-        formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={
-          modalType === "add"
-            ? () => addItem(formData, API["Add"], setContent, handleClose) //ДОКУМЕНТ
-            : () => editItem(formData, API["Edit"], setContent, handleClose) //ДОКУМЕНТ
-        }
-        isEditMode={modalType === "edit"}
+        formData={formData}
+        title="Добавить тип альбома"
+        fields={addEditAlbumTypes}
+        onSubmit={() => addItem(formData, API["Add"], setContent, handleClose)}
+        submitButtonText="Добавить"
       />
-
+      <UniversalModalForm
+        show={show && modalType === "edit"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Изменить тип альбома"
+        fields={addEditAlbumTypes}
+        onSubmit={() =>
+          editItem(formData, API["Edit"], setContent, handleClose)
+        }
+        submitButtonText="Сохранить"
+      />
       <DeleteRecoverModal
         show={show && (modalType === "delete" || modalType === "recover")}
         onHide={() => handleClose()}

@@ -36,9 +36,6 @@ const PhTypeSelect = ({ onChange }) => {
   return (
     <>
       <div className={`mb-3`}>
-        <label htmlFor="PhTypeId" className="form-label">
-          Тип съемки
-        </label>
         <select
           className="form-control"
           name="PhTypeId"

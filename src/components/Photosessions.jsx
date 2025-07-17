@@ -3,26 +3,12 @@ import React from "react";
 import {
   API,
   formEdit,
-  addItem,
   editItem,
-  callDate,
   openModal,
 } from "./photosessions/commonfunction";
 
-import {
-  Row,
-  Col,
-  Card,
-  Spinner,
-  Nav,
-  Badge,
-  Tab,
-  Button,
-  Modal,
-  Dropdown,
-  Form,
-} from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { Row, Col, Spinner, Nav, Badge, Tab } from "react-bootstrap";
+import { useState, useEffect, useCallback } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -31,6 +17,9 @@ import Reserved from "./photosessions/Reserved";
 import Completed from "./photosessions/Completed";
 
 import UniversalModalForm from "./forms/UniversalModalForm";
+import { editPhotosessionModal } from "./forms/ExportForms";
+import { callDate } from "./forms/ExportForms";
+import { reservationModal } from "./forms/ExportForms";
 
 function AllPhotosessions() {
   const formDataContent = {
@@ -47,9 +36,43 @@ function AllPhotosessions() {
   const [modalType, setModalType] = useState();
 
   const [key, setKey] = useState("noReserved");
+  const [notifications, setNotifications] = useState({});
+  const updateNotifications = useCallback((data) => {
+    const counts = {
+      NoReserved: 0,
+      Reserved: 0,
+      Completed: 0,
+    };
 
+    data.forEach((item) => {
+      const status = String(item.StatusId); // Явное преобразование в строку
+      if (status === "1") counts.NoReserved++;
+      if (status === "2") counts.Reserved++;
+      if (status === "3") counts.Completed++;
+    });
+
+    setNotifications((prev) => {
+      // 2. Обновляем только если значения изменились
+      if (
+        prev.NoReserved === String(counts.NoReserved) &&
+        prev.Reserved === String(counts.Reserved) &&
+        prev.Completed === String(counts.Completed)
+      ) {
+        return prev;
+      }
+      return {
+        NoReserved: String(counts.NoReserved),
+        Reserved: String(counts.Reserved),
+        Completed: String(counts.Completed),
+      };
+    });
+  }, []);
   useEffect(() => {
-    // Функция для получения данных из API
+    if (content.length > 0) {
+      updateNotifications(content);
+    }
+  }, [content, updateNotifications]);
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
@@ -119,26 +142,6 @@ function AllPhotosessions() {
     openModal(type, setShow);
   };
 
-  const callDate = [
-    { name: "CallDate", label: "Дата", type: "date", required: true },
-  ];
-  const reservationModal = [
-    { name: "Date", label: "Дата", type: "date", required: true },
-    { name: "Photographer", label: "Фотограф", type: "text", required: true },
-    {
-      name: "ContactName",
-      label: "ФИО Контакта",
-      type: "text",
-      required: true,
-    },
-    { name: "Phone", label: "Номер", type: "text" },
-  ];
-  const editPhotosessionModal = [
-    { name: "PhType", label: "Тип съемки", type: "text", required: true },
-    { name: "Location", label: "Локация", type: "text", required: true },
-    { name: "Price", label: "Оплата", type: "text" },
-  ];
-
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -160,7 +163,9 @@ function AllPhotosessions() {
                 >
                   <span>Не забронировано</span>
                   <div>
-                    <Badge pill bg="light" text="dark"></Badge>
+                    <Badge pill bg="light" text="dark">
+                      {notifications.NoReserved}
+                    </Badge>
                   </div>
                 </Nav.Link>
               </Nav.Item>
@@ -172,7 +177,9 @@ function AllPhotosessions() {
                 >
                   <span>Забронировано</span>
                   <div>
-                    <Badge pill bg="light" text="dark"></Badge>
+                    <Badge pill bg="light" text="dark">
+                      {notifications.Reserved}
+                    </Badge>
                   </div>
                 </Nav.Link>
               </Nav.Item>
@@ -184,7 +191,9 @@ function AllPhotosessions() {
                 >
                   <span>Завершено</span>
                   <div>
-                    <Badge pill bg="light" text="dark"></Badge>
+                    <Badge pill bg="light" text="dark">
+                      {notifications.Completed}
+                    </Badge>
                   </div>
                 </Nav.Link>
               </Nav.Item>

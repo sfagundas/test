@@ -3,6 +3,7 @@
 export const API = {
   EditMain: "edit_main_info",
   AddPhotosession: "add_photosession",
+  CallDate: "edit_call_date",
 };
 
 export const formEdit = (e, setFormData) => {
@@ -13,9 +14,15 @@ export const formEdit = (e, setFormData) => {
   }));
 };
 
-export const addItem = async (formData, api, setItems, handleClose) => {
+export const addItem = async (
+  formData,
+  api,
+  apiFile,
+  setItems,
+  handleClose
+) => {
   try {
-    const response = await fetch(`http://okalbm.ru/api/single_class/${api}`, {
+    const response = await fetch(`http://okalbm.ru/api/${apiFile}/${api}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,7 +43,7 @@ export const addItem = async (formData, api, setItems, handleClose) => {
 
     const newItem = {
       Id: String(result.Id),
-      PhTypeId: formData.StatusId,
+      PhTypeId: formData.PhTypeId,
       ClassId: formData.ClassId,
       StatusId: "1",
       // Добавьте остальные обязательные поля, которые есть в других элементах
@@ -55,11 +62,17 @@ export const addItem = async (formData, api, setItems, handleClose) => {
   }
 };
 
-export const editItem = async (formData, api, setItems, handleClose) => {
+export const editItem = async (
+  formData,
+  api,
+  apiFile,
+  setItems,
+  handleClose
+) => {
   try {
     // Отправляем данные на сервер для обновления
     const response = await fetch(
-      `http://okalbm.ru/api/single_class/${api}/${formData.Id}`,
+      `http://okalbm.ru/api/${apiFile}/${api}/${formData.Id}`,
       {
         method: "PUT", // или "PATCH", в зависимости от вашего API
         headers: {

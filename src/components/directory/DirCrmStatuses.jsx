@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  Row,
-  Col,
-  Button,
-  Modal,
-  Dropdown,
-  Form,
-  InputGroup,
-} from "react-bootstrap";
+import { Card, Row, Col, Button, Modal, Dropdown } from "react-bootstrap";
 import {
   formEdit,
   addItem,
@@ -19,80 +10,8 @@ import {
   fetchContent,
 } from "./commonfunction";
 
-// Компонент AddEditModal
-const AddEditModal = ({
-  show,
-  onHide,
-  formData,
-  onFormChange,
-  onSave,
-  isEditMode,
-}) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave();
-  };
+import UniversalModalForm from "../forms/UniversalModalForm";
 
-  return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>
-          {isEditMode ? "Редактировать CRM статус" : "Добавить CRM статус"}
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <input type="hidden" name="Id" value={formData.Id} />
-          <Row>
-            <Col sm={12}>
-              <Form.Group className="mb-3" controlId="Name">
-                <Form.Label>Статус</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text id="inputNamePrepend">
-                    <i className="bi bi-camera"></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="text"
-                    name="Name"
-                    placeholder="Название"
-                    onChange={onFormChange}
-                    value={formData.Name}
-                    aria-describedby="inputNamePrepend"
-                    required
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
-            <Col sm={12}>
-              <Form.Group className="mb-3" controlId="Comment">
-                <Form.Label>Комментарий</Form.Label>
-                <Form.Control
-                  aria-describedby="inputCommentPrepend"
-                  type="text"
-                  name="Comment"
-                  as="textarea"
-                  placeholder="Описание"
-                  onChange={onFormChange}
-                  value={formData.Comment}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={onHide}>
-              Отмена
-            </Button>
-            <Button variant="warning" type="submit">
-              {isEditMode ? "Сохранить" : "Добавить"}
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  );
-};
-
-// Компонент DeleteModal
 const DeleteRecoverModal = ({ show, onHide, onConfirm, isRecover }) => {
   return (
     <Modal show={show} onHide={onHide}>
@@ -182,6 +101,20 @@ export default function DirCrmStatuses() {
 
     openModal(type, setShow);
   };
+
+  const addEditCrmStatuses = [
+    {
+      name: "Name",
+      label: "Статус",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "Comment",
+      label: "Комментарий",
+      type: "textarea",
+    },
+  ];
 
   return (
     <>
@@ -276,17 +209,27 @@ export default function DirCrmStatuses() {
           ))}
       </Row>
 
-      <AddEditModal
-        show={show && (modalType === "add" || modalType === "edit")}
+      <UniversalModalForm
+        show={show && modalType === "add"}
         onHide={() => handleClose()}
-        formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={
-          modalType === "add"
-            ? () => addItem(formData, API["Add"], setContent, handleClose) //ДОКУМЕНТ
-            : () => editItem(formData, API["Edit"], setContent, handleClose) //ДОКУМЕНТ
+        formData={formData}
+        title="Добавить CRM статус"
+        fields={addEditCrmStatuses}
+        onSubmit={() => addItem(formData, API["Add"], setContent, handleClose)}
+        submitButtonText="Добавить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "edit"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Редактировать CRM статус"
+        fields={addEditCrmStatuses}
+        onSubmit={() =>
+          editItem(formData, API["Edit"], setContent, handleClose)
         }
-        isEditMode={modalType === "edit"}
+        submitButtonText="Сохранить"
       />
 
       <DeleteRecoverModal

@@ -9,6 +9,7 @@ import DirPhStatuses from "./directory/DirPhStatuses";
 import DirAlbumTypes from "./directory/DirAlbumTypes";
 import DirCities from "./directory/DirCities";
 import DirCrmStatuses from "./directory/DirCrmStatuses";
+import DirPhotographers from "./directory/DirPhotographers";
 
 function Directory() {
   const [key, setKey] = useState("phType");
@@ -47,6 +48,10 @@ function Directory() {
               <Nav.Item>
                 <Nav.Link eventKey="crmStatus">CRM статусы</Nav.Link>
               </Nav.Item>
+
+              <Nav.Item>
+                <Nav.Link eventKey="photographers">Фотографы</Nav.Link>
+              </Nav.Item>
             </Nav>
           </Col>
 
@@ -70,6 +75,10 @@ function Directory() {
 
               <Tab.Pane eventKey="crmStatus" title="crmStatus">
                 <DirCrmStatuses />
+              </Tab.Pane>
+
+              <Tab.Pane eventKey="photographers" title="photographers">
+                <DirPhotographers />
               </Tab.Pane>
             </Tab.Content>
           </Col>
