@@ -100,7 +100,7 @@ export default function PhStatuses() {
       setFormData({ Id: data });
     }
 
-    openModal(type, setShow);
+    openModal(setShow);
   };
 
   const addEditPhStatuses = [

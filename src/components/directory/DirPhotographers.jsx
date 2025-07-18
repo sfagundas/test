@@ -1,17 +1,45 @@
 import React, { useState, useEffect } from "react";
-import { Card, Row, Col, Button, Modal, Dropdown } from "react-bootstrap";
+import {
+  Card,
+  Row,
+  Col,
+  Button,
+  Modal,
+  Dropdown,
+  Form,
+  InputGroup,
+} from "react-bootstrap";
 import {
   formEdit,
   addItem,
   editItem,
   deleteItem,
   recoverItem,
+  toArchive,
   openModal,
   fetchContent,
 } from "./commonfunction";
 
 import UniversalModalForm from "../forms/UniversalModalForm";
 
+const ToArchiveModal = ({ show, onHide, onConfirm }) => {
+  return (
+    <Modal show={show} onHide={onHide}>
+      <Modal.Header closeButton>
+        <Modal.Title>Перенести фотографа в архив</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>Вы точно хотите перенести фотографа в архив?</Modal.Body>
+      <Modal.Footer>
+        <Button variant="danger" onClick={onHide}>
+          Отмена
+        </Button>
+        <Button variant="warning" onClick={onConfirm}>
+          Подтвердить
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
 const DeleteRecoverModal = ({ show, onHide, onConfirm, isRecover }) => {
   return (
     <Modal show={show} onHide={onHide}>
@@ -54,7 +82,7 @@ const addEditPhotographers = [
     colSize: 6,
   },
   {
-    name: "Contact",
+    name: "Phone",
     label: "Номер",
     type: "text",
     required: true,
@@ -64,59 +92,33 @@ const addEditPhotographers = [
     name: "Email",
     label: "Почта",
     type: "text",
-    required: true,
     colSize: 6,
   },
   {
     name: "Portfolio",
     label: "Ссылка на портфолио",
     type: "text",
-    required: true,
     colSize: 6,
   },
 ];
 
 export default function DirPhotographers() {
-  const [photographers, setPhotographers] = useState([
-    {
-      Id: "1",
-      Name: "Тимофеев Тимофей",
-      Contact: "8-888-888-88-88",
-      Email: "tim@yandex.ru",
-      Portfolio: "http://wfolio.ru",
-    },
-    {
-      Id: "2",
-      Name: "Филиппов Максим",
-      Contact: "9-999-999-99-99",
-      Email: "pussydestroyer@yandex.ru",
-      Portfolio: "http://wfolio.ru",
-    },
-    {
-      Id: "3",
-      Name: "Панов Ян",
-      Contact: "7-777-777-77-77",
-      Email: "panov@yandex.ru",
-      Portfolio: "http://wfolio.ru",
-    },
-    {
-      Id: "4",
-      Name: "Калинина Яна",
-      Contact: "5-555-555-55-55",
-      Email: "kalina@yandex.ru",
-      Portfolio: "http://wfolio.ru",
-    },
-  ]);
-
-  const formDataContent = { Id: "", Name: "", Price: "", Comment: "" }; // ДОКУМЕНТ
+  const formDataContent = {
+    Id: "",
+    Name: "",
+    Phone: "",
+    Email: "",
+    Portfolio: "",
+  }; // ДОКУМЕНТ
 
   const API = {
-    List: "photographer_list",
-    Archive: "archive_photographer_list",
+    List: "photographers_list",
+    Archive: "archive_photographers_list",
     Add: "add_dir_photographer",
     Edit: "edit_dir_photographer",
     Delete: "delete_dir_photographer", //нельзя, но нужно разделить deleterecover modal
     Recover: "recover_dir_photographer",
+    toArchive: "to_archive_dir_photographer",
   };
 
   const [modalType, setModalType] = useState();
@@ -151,18 +153,18 @@ export default function DirPhotographers() {
     setFD();
   };
 
-  const JVV = (type, data) => {
+  const controlFormData = (type, data) => {
     setModalType(type);
 
     if (type === "add") {
       setFD();
     } else if (type === "edit") {
       setFormData(data);
-    } else if (type === "delete" || type === "recover") {
+    } else if (type === "to_archive" || type === "recover") {
       setFormData({ Id: data });
     }
 
-    openModal(type, setShow);
+    openModal(setShow);
   };
 
   return (
@@ -170,13 +172,13 @@ export default function DirPhotographers() {
       <Button
         variant="light"
         className="col-12 mb-3"
-        onClick={() => JVV("add", null)}
+        onClick={() => controlFormData("add", null)}
       >
         <i className="bi bi-plus-lg"></i>
       </Button>
       <Row>
-        {photographers &&
-          photographers.map((item) => (
+        {content &&
+          content.map((item) => (
             <Col lg={6} key={item.Id}>
               <Card className="mb-3">
                 <Card.Body>
@@ -191,39 +193,47 @@ export default function DirPhotographers() {
                         ></Dropdown.Toggle>
 
                         <Dropdown.Menu>
-                          <Dropdown.Item onClick={() => JVV("edit", item)}>
+                          <Dropdown.Item
+                            onClick={() => controlFormData("edit", item)}
+                          >
                             <i className="bi bi-pencil-square me-2"></i>
                             Изменить
                           </Dropdown.Item>
-                          <Dropdown.Item onClick={() => JVV("delete", item.Id)}>
-                            <i className="bi bi-trash me-2"></i>Удалить
+                          <Dropdown.Item
+                            onClick={() =>
+                              controlFormData("to_archive", item.Id)
+                            }
+                          >
+                            <i className="bi bi-arrow-right me-2"></i>В архив
                           </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
                     </div>
                   </div>
-                  <div className="mb-2 text-body-secondary row">
-                    <Row>
-                      <Col sm={1} className="pt-1">
-                        <i className="bi bi-cash me-3"></i>
-                      </Col>
-                      <Col sm={11}>
-                        <small>{item.Price} руб.</small>
-                      </Col>
-                    </Row>
-                  </div>
-                  <div className="mb-2 text-body-secondary row">
-                    <Row>
-                      <Col sm={1} className="pt-1">
-                        {item.Comment && (
-                          <i className="bi bi-chat-right-text me-3"></i>
-                        )}
-                      </Col>
-                      <Col sm={11}>
-                        {item.Comment && <small>{item.Comment}</small>}
-                      </Col>
-                    </Row>
-                  </div>
+                  {item.Email && ( // новое написание, которое позволяет дважды не оборочивать один код
+                    <div className="mb-2 text-body-secondary row">
+                      <Row>
+                        <Col sm={1} className="pt-1">
+                          <i className="bi bi-envelope-fill"></i>
+                        </Col>
+                        <Col sm={11}>
+                          <small>{item.Email}</small>
+                        </Col>
+                      </Row>
+                    </div>
+                  )}
+                  {item.Phone && ( // новое написание, которое позволяет дважды не оборочивать один код
+                    <div className="mb-2 text-body-secondary row">
+                      <Row>
+                        <Col sm={1} className="pt-1">
+                          <i className="bi bi-telephone-fill"></i>
+                        </Col>
+                        <Col sm={11}>
+                          <small>{item.Phone}</small>
+                        </Col>
+                      </Row>
+                    </div>
+                  )}
                 </Card.Body>
               </Card>
             </Col>
@@ -242,7 +252,7 @@ export default function DirPhotographers() {
                       <Button
                         variant="light"
                         className="btn-sm pt-0 pb-0"
-                        onClick={() => JVV("recover", item.Id)}
+                        onClick={() => controlFormData("recover", item.Id)}
                       >
                         <i class="bi bi-arrow-counterclockwise"></i>
                       </Button>
@@ -251,22 +261,20 @@ export default function DirPhotographers() {
                   <div className="mb-2 text-body-secondary row">
                     <Row>
                       <Col sm={1} className="pt-1">
-                        <i className="bi bi-cash me-3"></i>
+                        <i class="bi bi-envelope-fill"></i>
                       </Col>
                       <Col sm={11}>
-                        <small>{item.Price} руб.</small>
+                        <small>{item.Email}</small>
                       </Col>
                     </Row>
                   </div>
                   <div className="mb-2 text-body-secondary row">
                     <Row>
                       <Col sm={1} className="pt-1">
-                        {item.Comment && (
-                          <i className="bi bi-chat-right-text me-3"></i>
-                        )}
+                        {item.Phone && <i class="bi bi-telephone-fill"></i>}
                       </Col>
                       <Col sm={11}>
-                        {item.Comment && <small>{item.Comment}</small>}
+                        {item.Phone && <small>{item.Phone}</small>}
                       </Col>
                     </Row>
                   </div>
@@ -299,7 +307,23 @@ export default function DirPhotographers() {
         submitButtonText="Сохранить"
       />
 
-      <DeleteRecoverModal
+      <ToArchiveModal
+        show={show && modalType === "to_archive"}
+        onHide={() => handleClose()}
+        onConfirm={() =>
+          toArchive(formData, API["toArchive"], setContent, handleClose)
+        }
+      />
+
+      {/* <recoverModal
+        show={show && modalType === "to_archive"}
+        onHide={() => handleClose()}
+        onConfirm={() =>
+          toArchive(formData, API["toArchive"], setContent, handleClose)
+        }
+      /> */}
+
+      {/* <DeleteRecoverModal
         show={show && (modalType === "delete" || modalType === "recover")}
         onHide={() => handleClose()}
         isRecover={modalType === "recover"}
@@ -322,7 +346,14 @@ export default function DirPhotographers() {
                   handleClose
                 ) //ДОКУМЕНТ
         }
-      />
+      /> */}
+      {/* <DeleteModal
+        show={show && modalType === "delete"}
+        onHide={() => handleClose()}
+        onConfirm={() =>
+          deleteItem(formData, API["Delete"], setContent, handleClose)
+        }
+      /> */}
     </>
   );
 }

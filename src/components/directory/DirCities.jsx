@@ -108,7 +108,7 @@ export default function DirCities() {
       setFormData({ Id: data });
     }
 
-    openModal(type, setShow);
+    openModal(setShow);
   };
 
   const addEditCity = [
@@ -256,30 +256,6 @@ export default function DirCities() {
                 )
         }
       />
-      {/* <UniversalModalForm
-        show={show && modalType === "edit"}
-        onHide={() => handleClose()}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        formData={formData}
-        title="Удалить город"
-        fields={addEditCity}
-        onSubmit={() =>
-          deleteItem(formData, API["Delete"], setContent, handleClose)
-        }
-        submitButtonText="Изменить"
-      />
-      <UniversalModalForm
-        show={show && modalType === "edit"}
-        onHide={() => handleClose()}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        formData={formData}
-        title="Восстановить город"
-        fields={addEditCity}
-        onSubmit={() =>
-          editItem(formData, API["Recover"], setContent, handleClose)
-        }
-        submitButtonText="Изменить"
-      /> */}
     </>
   );
 }

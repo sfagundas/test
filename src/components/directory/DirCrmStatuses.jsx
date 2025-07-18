@@ -99,7 +99,7 @@ export default function DirCrmStatuses() {
       setFormData({ Id: data });
     }
 
-    openModal(type, setShow);
+    openModal(setShow);
   };
 
   const addEditCrmStatuses = [

@@ -101,7 +101,7 @@ export default function DirAlbumTypes() {
       setFormData({ Id: data });
     }
 
-    openModal(type, setShow);
+    openModal(setShow);
   };
 
   const addEditAlbumTypes = [

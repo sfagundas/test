@@ -114,7 +114,7 @@ export default function DirPhTypes() {
       setFormData({ Id: data });
     }
 
-    openModal(type, setShow);
+    openModal(setShow);
   };
 
   return (

@@ -2,6 +2,8 @@ import { Form, Button, Row, Col } from "react-bootstrap";
 import PhTypeSelect from "../custom/PhTypeSelect";
 import CitySelect from "../custom/SelectCities";
 import SelectCRMstatus from "../custom/SelectCRMstatus";
+import SelectPhotographers from "../custom/SelectPhotographers";
+import SelectLocation from "../custom/SelectLocation";
 
 const UniversalForm = ({
   fields,
@@ -52,6 +54,16 @@ const UniversalForm = ({
                   />
                 ) : field.type === "selectCities" ? (
                   <CitySelect
+                    onChange={onFormChange}
+                    value={formData[field.name]}
+                  />
+                ) : field.type === "selectPhotographers" ? (
+                  <SelectPhotographers
+                    onChange={onFormChange}
+                    value={formData[field.name]}
+                  />
+                ) : field.type === "selectLocation" ? (
+                  <SelectLocation
                     onChange={onFormChange}
                     value={formData[field.name]}
                   />

@@ -9,7 +9,7 @@ export const editPhotosessionModal = [
   {
     name: "Location",
     label: "Локация",
-    type: "text",
+    type: "text", //апи с локациями сделать
     required: true,
     colSize: 6,
   },
@@ -23,21 +23,15 @@ export const callDate = [
 
 //Форма бронирования фотосъемки
 export const reservationModal = [
-  { name: "Date", label: "Дата", type: "date", required: true },
+  { name: "Date", label: "Дата", type: "date", required: true, colSize: 6 },
   {
     name: "Photographer",
     label: "Фотограф",
-    type: "text",
+    type: "selectPhotographers",
     required: true,
     colSize: 6,
   },
-  {
-    name: "PhTypeId",
-    label: "Тип съемки",
-    type: "phTypeSelect", // специальный тип для вашего селекта
-    required: true,
-    colSize: 6,
-  },
+
   {
     name: "ContactName",
     label: "ФИО Контакта",

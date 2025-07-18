@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Card,
   Row,
@@ -8,247 +9,316 @@ import {
   Form,
   InputGroup,
 } from "react-bootstrap";
-import { useState } from "react";
-import { useModal } from "./useModal";
+import {
+  formEdit,
+  addItem,
+  editItem,
+  deleteItem,
+  recoverItem,
+  toArchive,
+  openModal,
+  fetchContent,
+} from "./commonfunction";
+import UniversalModalForm from "../forms/UniversalModalForm";
 
-export default function DirPhotographers() {
-  const { show, formData, handleShow, handleClose, formEdit, setFormData } =
-    useModal({
-      Id: "",
-      Name: "",
-      City: "",
-      Street: "",
-      Location: "",
-    });
+const ToArchiveModal = ({ show, onHide, onConfirm }) => {
+  return (
+    <Modal show={show} onHide={onHide}>
+      <Modal.Header closeButton>
+        <Modal.Title>Перенести локацию в архив</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>Вы точно хотите перенести локацию в архив?</Modal.Body>
+      <Modal.Footer>
+        <Button variant="danger" onClick={onHide}>
+          Отмена
+        </Button>
+        <Button variant="warning" onClick={onConfirm}>
+          Подтвердить
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
 
-  const [photographers, setPhotographers] = useState([
+const DeleteModal = ({ show, onHide, onConfirm }) => {
+  return (
+    <Modal show={show} onHide={onHide}>
+      <Modal.Header closeButton>
+        <Modal.Title>Удалить локацию</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        Вы уверены, что хотите безвозвратно удалить локацию?
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Отмена
+        </Button>
+        <Button variant="danger" onClick={onConfirm}>
+          Подтвердить
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+const addEditLocation = [
+  {
+    name: "Name",
+    label: "Название",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "Comment",
+    label: "Комментарий",
+    type: "text",
+  },
+  {
+    name: "Photo",
+    label: "Ссылка",
+    type: "text",
+  },
+];
+
+export default function DirLocation() {
+  const formDataContent = {
+    Id: "",
+    Name: "",
+    Comment: "",
+    Photo: "",
+  };
+
+  const API = {
+    List: "location_list",
+    Archive: "archive_location_list",
+    Add: "add_dir_location",
+    Edit: "edit_dir_location",
+    Delete: "delete_dir_location", //нельзя, но нужно разделить deleterecover modal
+    Recover: "recover_dir_location",
+    toArchive: "to_archive_dir_location",
+  };
+
+  const [modalType, setModalType] = useState();
+  const [show, setShow] = useState(false);
+  const [content, setContent] = useState([
     {
       Id: "1",
       Name: "Сопка",
-      City: "Вилючинск",
-      Street: "Иванова",
-      Location: "http://wfolio.ru",
+      Comment: "Вилючинск",
+      Photo: "http://wfolio.ru",
     },
     {
       Id: "2",
       Name: "Вулкан",
-      City: "Петропавловск-Камчатский",
-      Street: "Вулканная",
-      Location: "http://wfolio.ru",
+      Comment: "Петропавловск-Камчатский",
+      Photo: "http://wfolio.ru",
     },
     {
       Id: "3",
       Name: "Гетто",
-      City: "Елизово",
-      Street: "Геттонная",
-      Location: "http://wfolio.ru",
+      Comment: "Елизово",
+      Photo: "http://wfolio.ru",
     },
     {
       Id: "4",
       Name: "Камень",
-      City: "Петропавловск-Камчатский",
+      Comment: "Петропавловск-Камчатский",
       Street: "Камченная",
-      Location: "http://wfolio.ru",
+      Photo: "http://wfolio.ru",
     },
   ]);
+  const [archive, setArchive] = useState();
+  const [formData, setFormData] = useState(formDataContent);
+  // useEffect(() => {
+  //   const loadMainContent = async () => {
+  //     try {
+  //       const data = await fetchContent(API["List"]); // ДОКУМЕНТ
+  //       setContent(data);
+  //     } catch {}
+  //   };
+  //   loadMainContent();
 
-  // Добавление фотографа
-  const addPhotographer = () => {
-    const newPhotographer = {
-      ...formData,
-      Id: (photographers.length + 1).toString(),
-    };
-    setPhotographers([...photographers, newPhotographer]);
-    handleClose();
+  //   const loadArchive = async () => {
+  //     try {
+  //       const data = await fetchContent(API["Archive"]); // ДОКУМЕНТ
+  //       setArchive(data);
+  //     } catch {}
+  //   };
+  //   loadArchive();
+  // }, []);
+
+  const setFD = () => {
+    setFormData(formDataContent);
   };
 
-  // СУПЕР ВАЖНЫЕ ЗАМЕЧАНИЯ
-  // При работе с базой, проверять что все записалось
-  // В данной функции ID гнерится здесь, в рабочем виде должно браться новое значение из БД и записываться в photorgaphers !!!
-
-  // Редактирование фотографа
-  const editPhotographer = (Id) => {
-    const updatedPhotographers = photographers.map((item) =>
-      item.Id === Id ? { ...item, ...formData } : item
-    );
-    setPhotographers(updatedPhotographers);
-    handleClose();
+  const handleClose = () => {
+    setShow(false);
+    setFD();
   };
 
-  // Открытие модального окна для редактирования
-  const openEditModal = (data) => {
-    setFormData(data);
-    handleShow();
+  const controlFormData = (type, data) => {
+    setModalType(type);
+
+    if (type === "add") {
+      setFD();
+    } else if (type === "edit") {
+      setFormData(data);
+    } else if (type === "to_archive" || type === "recover") {
+      setFormData({ Id: data });
+    }
+
+    openModal(setShow);
   };
 
   return (
     <>
-      <Button variant="light" className="col-12 mb-3" onClick={handleShow}>
+      <Button
+        variant="light"
+        className="col-12 mb-3"
+        onClick={() => controlFormData("add", null)}
+      >
         <i className="bi bi-plus-lg"></i>
       </Button>
-
       <Row>
-        {photographers.map((photographer) => (
-          <Col lg={6} key={photographer.id}>
-            <Card className="mb-3">
-              <Card.Body>
-                <div className="d-flex justify-content-between">
-                  <Card.Title className="mb-2">{photographer.Name}</Card.Title>
-                  <div>
-                    <Dropdown>
-                      <Dropdown.Toggle
+        {content &&
+          content.map((item) => (
+            <Col lg={6} key={item.Id}>
+              <Card className="mb-3">
+                <Card.Body>
+                  <div className="d-flex justify-content-between">
+                    <Card.Title className="mb-2">{item.Name}</Card.Title>
+                    <div>
+                      <Dropdown>
+                        <Dropdown.Toggle
+                          variant="light"
+                          className="btn-sm pt-0 pb-0"
+                          id="dropdown-basic"
+                        ></Dropdown.Toggle>
+
+                        <Dropdown.Menu>
+                          <Dropdown.Item
+                            onClick={() => controlFormData("edit", item)}
+                          >
+                            <i className="bi bi-pencil-square me-2"></i>
+                            Изменить
+                          </Dropdown.Item>
+                          <Dropdown.Item
+                            onClick={() => controlFormData("delete", item.Id)}
+                          >
+                            <i className="bi bi-trash me-2"></i>
+                            Удалить
+                          </Dropdown.Item>
+                          <Dropdown.Item
+                            onClick={() =>
+                              controlFormData("to_archive", item.Id)
+                            }
+                          >
+                            <i className="bi bi-arrow-right me-2"></i>В архив
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </div>
+                  </div>
+                  <div className="mb-2 text-body-secondary row">
+                    <Row>
+                      <Col sm={1} className="pt-1">
+                        <i className="bi bi-chat-right-text me-3"></i>
+                      </Col>
+                      <Col sm={11}>
+                        <small>{item.Comment}</small>
+                      </Col>
+                    </Row>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+      </Row>
+      <hr />
+      <Row>
+        {archive &&
+          archive.map((item) => (
+            <Col sm={6} md={6} lg={6} key={item.Id}>
+              <Card className="mb-3">
+                <Card.Body>
+                  <div className="d-flex justify-content-between">
+                    <Card.Title className="mb-2">{item.Name}</Card.Title>
+                    <div>
+                      <Button
                         variant="light"
                         className="btn-sm pt-0 pb-0"
-                        id="dropdown-basic"
-                      ></Dropdown.Toggle>
-
-                      <Dropdown.Menu>
-                        <Dropdown.Item
-                          onClick={() => openEditModal(photographer)}
-                        >
-                          <i className="bi bi-pencil-square me-2"></i>
-                          Изменить
-                        </Dropdown.Item>
-                        <Dropdown.Item>
-                          <i className="bi bi-trash me-2"></i>Удалить
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
+                        onClick={() => controlFormData("recover", item.Id)}
+                      >
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                      </Button>
+                    </div>
                   </div>
-                </div>
-                <div className="mb-2">
-                  <i className="bi bi-telephone me-2"></i>
-                  {photographer.Contact}
-                </div>
-                <div className="mb-2">
-                  <i className="bi bi-envelope-at me-2"></i>
-                  {photographer.Email}
-                </div>
-                <div>
-                  <a href="{photographer.Portfolio}">
-                    <i className="bi bi-box-arrow-up-right me-2"></i>Портфолио
-                  </a>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
+                  <div className="mb-2 text-body-secondary row">
+                    <Row>
+                      <Col sm={1} className="pt-1">
+                        <i class="bi bi-envelope-fill"></i>
+                      </Col>
+                      <Col sm={11}>
+                        <small>{item.Email}</small>
+                      </Col>
+                    </Row>
+                  </div>
+                  <div
+                    className="mb-2 text-body-secondary"
+                    style={{ fontSize: "12px" }}
+                  >
+                    <Row>
+                      <Col sm={1} className="pt-1">
+                        <i className="bi bi-chat-right-text me-3"></i>
+                      </Col>
+                      <Col sm={10}>
+                        <small>{item.Comment}</small>
+                      </Col>
+                    </Row>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
       </Row>
 
-      <div
-        className="modal show"
-        style={{ display: "block", position: "initial" }}
-      >
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>
-              {formData.Id ? "Редактировать локацию" : "Добавить локацию"}
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <input type="hidden" name="Id" value={formData.Id} />
-              <Row>
-                <Col xs={6}>
-                  <Form.Group className="mb-3" controlId="Name">
-                    <Form.Label>Название</Form.Label>
+      <UniversalModalForm
+        show={show && modalType === "add"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Добавить локацию"
+        fields={addEditLocation}
+        onSubmit={() => addItem(formData, API["Add"], setContent, handleClose)}
+        submitButtonText="Добавить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "edit"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Редактировать локацию"
+        fields={addEditLocation}
+        onSubmit={() =>
+          editItem(formData, API["Edit"], setContent, handleClose)
+        }
+        submitButtonText="Сохранить"
+      />
 
-                    <InputGroup>
-                      <InputGroup.Text id="inputNamePrepend">
-                        <i className="bi bi-person"></i>
-                      </InputGroup.Text>
-                      <Form.Control
-                        type="text"
-                        name="Name"
-                        placeholder="Название"
-                        onChange={formEdit}
-                        value={formData.Name}
-                        aria-describedby="inputNamePrepend"
-                        required
-                      />
-                    </InputGroup>
-                  </Form.Group>
-                </Col>
-
-                <Col xs={6}>
-                  <Form.Group className="mb-3" controlId="City">
-                    <Form.Label>Расположение</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text id="inputCityPrepend">
-                        <i className="bi bi-telephone"></i>
-                      </InputGroup.Text>
-                      <Form.Control
-                        type="text"
-                        name="city"
-                        placeholder="Город"
-                        onChange={formEdit}
-                        value={formData.City}
-                        aria-describedby="inputCityPrepend"
-                        required
-                      />
-                    </InputGroup>
-                  </Form.Group>
-                </Col>
-
-                <Col xs={6}>
-                  <Form.Group className="mb-3" controlId="Street">
-                    <Form.Label>Улица</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text id="inputStreetPrepend">
-                        <i className="bi bi-envelope-at"></i>
-                      </InputGroup.Text>
-                      <Form.Control
-                        aria-describedby="inputStreetPrepend"
-                        type="text"
-                        name="Street"
-                        placeholder="Название улицы"
-                        onChange={formEdit}
-                        value={formData.Street}
-                      />
-                    </InputGroup>
-                  </Form.Group>
-                </Col>
-                <Col xs={6}>
-                  <Form.Group className="mb-3" controlId="Location">
-                    <Form.Label>Снимок локации</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text id="inputLocation">
-                        <i class="bi bi-instagram"></i>
-                      </InputGroup.Text>
-                      <Form.Control
-                        aria-describedby="inputLocation"
-                        type="text"
-                        name="Location"
-                        placeholder="Вставьте ссылку"
-                        onChange={formEdit}
-                        value={formData.Location}
-                      />
-                    </InputGroup>
-                  </Form.Group>
-                </Col>
-              </Row>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Отмена
-            </Button>
-
-            {formData.Id ? (
-              <Button
-                variant="warning"
-                onClick={() => editPhotographer(formData.Id)}
-              >
-                Сохранить
-              </Button>
-            ) : (
-              <Button variant="warning" onClick={addPhotographer}>
-                Добавить
-              </Button>
-            )}
-          </Modal.Footer>
-        </Modal>
-      </div>
+      <ToArchiveModal
+        show={show && modalType === "to_archive"}
+        onHide={() => handleClose()}
+        onConfirm={() =>
+          toArchive(formData, API["toArchive"], setContent, handleClose)
+        }
+      />
+      <DeleteModal
+        show={show && modalType === "delete"}
+        onHide={() => handleClose()}
+        onConfirm={() =>
+          deleteItem(formData, API["Delete"], setContent, handleClose)
+        }
+      />
     </>
   );
 }
