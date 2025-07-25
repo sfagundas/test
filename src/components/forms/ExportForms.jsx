@@ -1,19 +1,19 @@
 //Форма изменения основной информации фотосессии
 export const editPhotosessionModal = [
   {
-    name: "PhType",
+    name: "PhTypeId",
     label: "Тип съемки",
     type: "phTypeSelect",
     required: true,
   },
   {
-    name: "Location",
+    name: "LocationId",
     label: "Локация",
-    type: "text", //апи с локациями сделать
+    type: "selectLocation", //апи с локациями сделать
     required: true,
     colSize: 6,
   },
-  { name: "Price", label: "Оплата", type: "text", colSize: 6 },
+  { name: "v", label: "Оплата", type: "text", colSize: 6 },
 ];
 
 //Форма изменения даты
@@ -94,6 +94,31 @@ export const addPhotosessionForm = [
     name: "PhTypeId",
     label: "Тип съемки",
     type: "phTypeSelect",
+    required: true,
+  },
+];
+
+export const addLogForm = [
+  {
+    name: "Text",
+    label: "Комментарий",
+    type: "textarea",
+    required: true,
+  },
+  {
+    name: "DateTime",
+    type: "hidden",
+    required: true,
+    defaultValue: new Date().toISOString().slice(0, 10),
+    readOnly: true,
+  },
+];
+
+export const editLogModal = [
+  {
+    name: "Text",
+    label: "Комментарий",
+    type: "textarea",
     required: true,
   },
 ];

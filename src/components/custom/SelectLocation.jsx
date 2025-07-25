@@ -10,7 +10,7 @@ const LocationSelect = ({ id, onChange }) => {
     // Функция для получения списка статусов
     const fetchLocation = async () => {
       try {
-        const response = await fetch("http://okalbm.ru/api/api/location_list");
+        const response = await fetch("http://okalbm.ru/api/api/locations_list");
         if (!response.ok) {
           throw new Error("Ошибка при получении данных");
         }

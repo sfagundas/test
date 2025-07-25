@@ -23,7 +23,6 @@ import {
 
 const CRM = () => {
   const [content, setContent] = useState([]);
-  const [key, setKey] = useState("request");
   const [notifications, setNotifications] = useState({});
 
   const formDataContent = {
@@ -144,8 +143,19 @@ const CRM = () => {
     });
   }, []);
 
+  const [activeTab, setActiveTab] = useState(() => {
+    const savedTab = localStorage.getItem("activeTabCRM");
+    return savedTab || "request";
+  });
   useEffect(() => {
-    // 3. Вызываем updateNotifications только при изменении content
+    localStorage.setItem("activeTabCRM", activeTab);
+  }, [activeTab]);
+
+  const handleSelect = (selectedTab) => {
+    setActiveTab(selectedTab);
+  };
+
+  useEffect(() => {
     if (content.length > 0) {
       updateNotifications(content);
     }
@@ -202,8 +212,8 @@ const CRM = () => {
       <Tab.Container
         id="left-tabs-example"
         defaultActiveKey="first"
-        activeKey={key}
-        onSelect={(k) => setKey(k)}
+        activeKey={activeTab}
+        onSelect={handleSelect}
       >
         <Row>
           <Col xxl={2} xl={3} lg={3} md={4} sm={5}>
@@ -269,55 +279,22 @@ const CRM = () => {
           <Col xxl={10} xl={9} lg={9} md={8} sm={7}>
             <Tab.Content>
               <Tab.Pane eventKey="request" title="request">
-                <Request
-                  content={content}
-                  setContent={setContent}
-                  modalType={modalType}
-                  show={show}
-                  setFormData={setFormData}
-                  handleClose={handleClose}
-                  controlFormData={controlFormData}
-                  formData={formData}
-                />
+                <Request content={content} controlFormData={controlFormData} />
               </Tab.Pane>
 
               <Tab.Pane eventKey="documents" title="documents">
                 <Documents
                   content={content}
-                  setContent={setContent}
-                  modalType={modalType}
-                  show={show}
-                  setFormData={setFormData}
-                  handleClose={handleClose}
                   controlFormData={controlFormData}
-                  formData={formData}
                 />
               </Tab.Pane>
 
               <Tab.Pane eventKey="good" title="good">
-                <Good
-                  content={content}
-                  setContent={setContent}
-                  modalType={modalType}
-                  show={show}
-                  setFormData={setFormData}
-                  handleClose={handleClose}
-                  controlFormData={controlFormData}
-                  formData={formData}
-                />
+                <Good content={content} controlFormData={controlFormData} />
               </Tab.Pane>
 
               <Tab.Pane eventKey="bad" title="bad">
-                <Bad
-                  content={content}
-                  setContent={setContent}
-                  modalType={modalType}
-                  show={show}
-                  setFormData={setFormData}
-                  handleClose={handleClose}
-                  controlFormData={controlFormData}
-                  formData={formData}
-                />
+                <Bad content={content} controlFormData={controlFormData} />
               </Tab.Pane>
             </Tab.Content>
           </Col>

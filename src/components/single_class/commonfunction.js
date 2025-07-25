@@ -1,9 +1,14 @@
 // commonfunction.js
 
 export const API = {
+  GetMainInfo: "get_main_info",
   EditMain: "edit_main_info",
   AddPhotosession: "add_photosession",
   CallDate: "edit_call_date",
+  GetLog: "get_class_log",
+  AddLog: "add_class_log",
+  EditLog: "edit_class_log",
+  DeleteLog: "delete_class_log",
 };
 
 export const formEdit = (e, setFormData) => {
@@ -46,6 +51,7 @@ export const addItem = async (
       PhTypeId: formData.PhTypeId,
       ClassId: formData.ClassId,
       StatusId: "1",
+      CallDate: new Date().toISOString().slice(0, 10),
       // Добавьте остальные обязательные поля, которые есть в других элементах
     };
 

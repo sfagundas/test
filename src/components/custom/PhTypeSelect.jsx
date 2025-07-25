@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const PhTypeSelect = ({ onChange }) => {
+const PhTypeSelect = ({ value, onChange }) => {
   // Деструктурируем id из props
   const [content, setContent] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +45,7 @@ const PhTypeSelect = ({ onChange }) => {
         >
           <option value="">-</option>
           {content.map((item) => (
-            <option key={item.Id} value={item.Id}>
+            <option key={item.Id} value={item.Id} selected={item.Id === value}>
               {item.Value}
             </option>
           ))}

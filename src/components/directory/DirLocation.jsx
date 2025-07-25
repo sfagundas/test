@@ -89,8 +89,8 @@ export default function DirLocation() {
   };
 
   const API = {
-    List: "location_list",
-    Archive: "archive_location_list",
+    List: "locations_list",
+    Archive: "locations_archive_list",
     Add: "add_dir_location",
     Edit: "edit_dir_location",
     Delete: "delete_dir_location", //нельзя, но нужно разделить deleterecover modal
@@ -100,52 +100,26 @@ export default function DirLocation() {
 
   const [modalType, setModalType] = useState();
   const [show, setShow] = useState(false);
-  const [content, setContent] = useState([
-    {
-      Id: "1",
-      Name: "Сопка",
-      Comment: "Вилючинск",
-      Photo: "http://wfolio.ru",
-    },
-    {
-      Id: "2",
-      Name: "Вулкан",
-      Comment: "Петропавловск-Камчатский",
-      Photo: "http://wfolio.ru",
-    },
-    {
-      Id: "3",
-      Name: "Гетто",
-      Comment: "Елизово",
-      Photo: "http://wfolio.ru",
-    },
-    {
-      Id: "4",
-      Name: "Камень",
-      Comment: "Петропавловск-Камчатский",
-      Street: "Камченная",
-      Photo: "http://wfolio.ru",
-    },
-  ]);
+  const [content, setContent] = useState();
   const [archive, setArchive] = useState();
   const [formData, setFormData] = useState(formDataContent);
-  // useEffect(() => {
-  //   const loadMainContent = async () => {
-  //     try {
-  //       const data = await fetchContent(API["List"]); // ДОКУМЕНТ
-  //       setContent(data);
-  //     } catch {}
-  //   };
-  //   loadMainContent();
+  useEffect(() => {
+    const loadMainContent = async () => {
+      try {
+        const data = await fetchContent(API["List"]); // ДОКУМЕНТ
+        setContent(data);
+      } catch {}
+    };
+    loadMainContent();
 
-  //   const loadArchive = async () => {
-  //     try {
-  //       const data = await fetchContent(API["Archive"]); // ДОКУМЕНТ
-  //       setArchive(data);
-  //     } catch {}
-  //   };
-  //   loadArchive();
-  // }, []);
+    const loadArchive = async () => {
+      try {
+        const data = await fetchContent(API["Archive"]); // ДОКУМЕНТ
+        setArchive(data);
+      } catch {}
+    };
+    loadArchive();
+  }, []);
 
   const setFD = () => {
     setFormData(formDataContent);
@@ -163,7 +137,7 @@ export default function DirLocation() {
       setFD();
     } else if (type === "edit") {
       setFormData(data);
-    } else if (type === "to_archive" || type === "recover") {
+    } else if (type === "delete" || type === "recover") {
       setFormData({ Id: data });
     }
 
@@ -207,13 +181,6 @@ export default function DirLocation() {
                           >
                             <i className="bi bi-trash me-2"></i>
                             Удалить
-                          </Dropdown.Item>
-                          <Dropdown.Item
-                            onClick={() =>
-                              controlFormData("to_archive", item.Id)
-                            }
-                          >
-                            <i className="bi bi-arrow-right me-2"></i>В архив
                           </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
@@ -304,19 +271,17 @@ export default function DirLocation() {
         }
         submitButtonText="Сохранить"
       />
-
-      <ToArchiveModal
-        show={show && modalType === "to_archive"}
-        onHide={() => handleClose()}
-        onConfirm={() =>
-          toArchive(formData, API["toArchive"], setContent, handleClose)
-        }
-      />
       <DeleteModal
         show={show && modalType === "delete"}
         onHide={() => handleClose()}
         onConfirm={() =>
-          deleteItem(formData, API["Delete"], setContent, handleClose)
+          deleteItem(
+            formData,
+            API["Delete"],
+            setContent,
+            setArchive,
+            handleClose
+          )
         }
       />
     </>

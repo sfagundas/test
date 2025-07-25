@@ -35,7 +35,6 @@ function AllPhotosessions() {
   const [show, setShow] = useState(false);
   const [modalType, setModalType] = useState();
 
-  const [key, setKey] = useState("noReserved");
   const [notifications, setNotifications] = useState({});
   const updateNotifications = useCallback((data) => {
     const counts = {
@@ -67,6 +66,21 @@ function AllPhotosessions() {
       };
     });
   }, []);
+
+  const [activeTab, setActiveTab] = useState(() => {
+    const savedTab = localStorage.getItem("activeTabPhotosessions");
+    return savedTab || "noReserved"; // 'home' - это ID вашего первого таба
+  });
+
+  const handleSelect = (selectedTab) => {
+    setActiveTab(selectedTab);
+  };
+
+  // useEffect для сохранения активного таба в localStorage при его изменении
+  useEffect(() => {
+    localStorage.setItem("activeTabPhotosessions", activeTab);
+  }, [activeTab]); // Этот эффект запускается только когда activeTab меняется
+
   useEffect(() => {
     if (content.length > 0) {
       updateNotifications(content);
@@ -137,6 +151,12 @@ function AllPhotosessions() {
       });
     } else if (type === "reservationModal") {
     } else if (type === "editPhotosessionModal") {
+      setFormData({
+        Id: data.Id,
+        PhTypeId: data.PhTypeId,
+        LocationId: data.LocationId,
+        Price: data.Price,
+      });
     }
 
     openModal(type, setShow);
@@ -150,8 +170,8 @@ function AllPhotosessions() {
       <Tab.Container
         id="left-tabs-example"
         defaultActiveKey="first"
-        activeKey={key}
-        onSelect={(k) => setKey(k)}
+        activeKey={activeTab}
+        onSelect={handleSelect}
       >
         <Row>
           <Col xxl={2} xl={3} lg={3} md={4} sm={5}>

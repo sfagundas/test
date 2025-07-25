@@ -2,7 +2,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Tab from "react-bootstrap/Tab";
 import Nav from "react-bootstrap/Nav";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import DirPhTypes from "./directory/DirPhTypes";
 import DirPhStatuses from "./directory/DirPhStatuses";
@@ -13,7 +13,18 @@ import DirPhotographers from "./directory/DirPhotographers";
 import DirLocation from "./directory/DirLocation";
 
 function Directory() {
-  const [key, setKey] = useState("phType");
+  const [activeTab, setActiveTab] = useState(() => {
+    const savedTab = localStorage.getItem("activeTabDirectory");
+    return savedTab || "phType";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("activeTabDirectory", activeTab);
+  }, [activeTab]);
+
+  const handleSelect = (selectedTab) => {
+    setActiveTab(selectedTab);
+  };
 
   return (
     <>
@@ -24,8 +35,8 @@ function Directory() {
       <Tab.Container
         id="left-tabs-example"
         defaultActiveKey="first"
-        activeKey={key}
-        onSelect={(k) => setKey(k)}
+        activeKey={activeTab}
+        onSelect={handleSelect}
       >
         <Row>
           <Col xxl={2} xl={3} lg={3} md={4} sm={5}>
