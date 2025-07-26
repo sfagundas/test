@@ -3,7 +3,9 @@
 export const API = {
   GetMainInfo: "get_main_info",
   EditMain: "edit_main_info",
+  Reservation: "add_reservation",
   AddPhotosession: "add_photosession",
+  EditOrder: "edit_order", //details
   CallDate: "edit_call_date",
   GetLog: "get_class_log",
   AddLog: "add_class_log",
@@ -47,17 +49,12 @@ export const addItem = async (
     }
 
     const newItem = {
-      Id: String(result.Id),
-      PhTypeId: formData.PhTypeId,
-      ClassId: formData.ClassId,
-      StatusId: "1",
-      CallDate: new Date().toISOString().slice(0, 10),
-      // Добавьте остальные обязательные поля, которые есть в других элементах
+      ...formData,
+      Id: result.Id,
     };
 
     setItems((prevContent) => {
       const updatedContent = [...prevContent, newItem];
-      console.log("Обновленный content:", updatedContent);
       return updatedContent;
     });
 
@@ -105,11 +102,17 @@ export const editItem = async (
   }
 };
 
-export const deleteItem = async (formData, api, setItems, handleClose) => {
+export const deleteItem = async (
+  formData,
+  api,
+  apiFile,
+  setItems,
+  handleClose
+) => {
   try {
     // Отправляем запрос на сервер для удаления
     const response = await fetch(
-      `http://okalbm.ru/api/insert/${api}/${formData.Id}`,
+      `http://okalbm.ru/api/${apiFile}/${api}/${formData.Id}`,
       {
         method: "DELETE", // Используем метод DELETE
       }

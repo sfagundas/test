@@ -1,20 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import {
-  Button,
-  Spinner,
-  Row,
-  Col,
-  Card,
-  Badge,
-  Tab,
-  Nav,
-  Modal,
-  Form,
-  InputGroup,
-  Dropdown,
-} from "react-bootstrap";
+import { Button, Spinner, Row, Col, Badge, Tab, Nav } from "react-bootstrap";
 
 import {
   openModal,
@@ -22,97 +9,18 @@ import {
   formEdit,
   addItem,
   editItem,
-  deleteItem,
 } from "./single_class/commonfunction";
 
 import { Link } from "react-router-dom";
 
 import UniversalModalForm from "./forms/UniversalModalForm";
-import { editPhotosessionModal } from "./forms/ExportForms";
-import {
-  callDate,
-  reservationModal,
-  addPhotosessionForm,
-  editMainInfoForm,
-  addLogForm,
-  editLogModal,
-} from "./forms/ExportForms";
+import { addPhotosessionForm, editMainInfoForm } from "./forms/ExportForms";
 
 import Main from "./single_class/Main";
 import Details from "./single_class/Details";
 import Photosessions from "./single_class/Photosessions";
 import ClassMain from "./single_class/ClassMain";
 import Teachers from "./single_class/Teachers";
-
-const DeleteModal = ({ show, onHide, onConfirm }) => {
-  return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>Удалить лог</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        Вы уверены, что хотите безвозвратно удалить запись?
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Отмена
-        </Button>
-        <Button variant="danger" onClick={onConfirm}>
-          Подтвердить
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
-};
-
-const EditOrderModal = ({ show, onHide, formData, onFormChange, onSave }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave();
-  };
-
-  return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>Редактировать заказ</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <input type="hidden" name="Id" value={formData.Id} />
-          <Row>
-            <Col sm={12}>
-              <Form.Group className="mb-3" controlId="ClientName">
-                <Form.Label>Клиент</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text id="inputClientNamePrepend">
-                    <i className="bi bi-camera"></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="text"
-                    name="ClientName"
-                    placeholder="Название"
-                    onChange={onFormChange}
-                    value={formData.ClientName}
-                    aria-describedby="inputClientNamePrepend"
-                    required
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={onHide}>
-              Отмена
-            </Button>
-            <Button variant="warning" type="submit">
-              Добавить
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  );
-};
 
 export default function Class() {
   const { class_id } = useParams();
@@ -131,9 +39,7 @@ export default function Class() {
     if (type === "editMainInfo") {
       setFormData(data);
     }
-    if (type === "editOrder") {
-      setFormData({ Id: data });
-    }
+
     if (type === "addPhotosession") {
       setFormData({ ClassId: data.Id, StatusId: "1" });
     }
@@ -149,10 +55,6 @@ export default function Class() {
         PhTypeId: data.PhTypeId,
         Price: data.Price,
         LocationId: data.LocationId,
-      });
-    } else if (type === "addLog") {
-      setFormData({
-        //НЕ ЗАБЫТЬ
       });
     }
 
@@ -255,29 +157,6 @@ export default function Class() {
     fetchData(); // Вызываем функцию для получения данных
   }, [class_id]);
 
-  useEffect(() => {
-    // Функция для получения данных из API
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `http://okalbm.ru/api/photosessions/ph_class_photosessions/${class_id}`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setPhotosessions(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData(); // Вызываем функцию для получения данных
-  }, []);
-
   if (isLoading) {
     return (
       <div
@@ -349,7 +228,7 @@ export default function Class() {
                   eventKey="details"
                   className="d-flex justify-content-between"
                 >
-                  <span>Детали заказов</span>
+                  <span>Детали класса</span>
                   <div>
                     <Badge pill bg="light" text="dark">
                       {notifications.details}
@@ -405,22 +284,15 @@ export default function Class() {
           <Col xxl={10} xl={9} lg={9} md={8} sm={7}>
             <Tab.Content>
               <Tab.Pane eventKey="main" title="main">
-                <Main
-                  content={content}
-                  controlFormData={controlFormData}
-                  classId={class_id}
-                />
+                <Main content={content} classId={class_id} />
               </Tab.Pane>
 
               <Tab.Pane eventKey="details" title="details">
-                <Details content={content} controlFormData={controlFormData} />
+                <Details classId={class_id} />
               </Tab.Pane>
 
               <Tab.Pane eventKey="photosessions" title="photosessions">
-                <Photosessions
-                  content={photosessions}
-                  controlFormData={controlFormData}
-                />
+                <Photosessions classId={class_id} />
               </Tab.Pane>
 
               <Tab.Pane eventKey="class" title="class">
@@ -457,34 +329,6 @@ export default function Class() {
         submitButtonText="Сохранить"
       />
 
-      <EditOrderModal
-        show={show && modalType === "editOrder"}
-        onHide={() => handleClose()}
-        formData={formData}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        onSave={() =>
-          editItem(
-            formData,
-            API["Edit"],
-            "single_class",
-            setContent,
-            handleClose
-          )
-        }
-      />
-      {/* <UniversalModalForm
-        show={show && modalType === "editOrder"}
-        onHide={() => handleClose()}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        formData={formData}
-        title="Редактировать основную информацию"
-        fields={editMainInfoForm}
-        onSubmit={() =>
-          editItem(formData, API["Edit"], setContent, handleClose)
-        }
-        submitButtonText="Сохранить"
-      /> */}
-
       <UniversalModalForm
         show={show && modalType === "addPhotosession"}
         onHide={() => handleClose()}
@@ -502,104 +346,6 @@ export default function Class() {
           )
         }
         submitButtonText="Добавить"
-      />
-      <UniversalModalForm
-        show={show && modalType === "callDate"}
-        onHide={() => handleClose()}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        formData={formData}
-        title="Дата связи"
-        fields={callDate}
-        onSubmit={() =>
-          editItem(
-            formData,
-            API["CallDate"],
-            "photosessions",
-            setPhotosessions,
-            handleClose
-          )
-        }
-        submitButtonText="Сохранить"
-      />
-      <UniversalModalForm
-        show={show && modalType === "reservationModal"}
-        onHide={() => handleClose()}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        formData={formData}
-        title="Забронировать"
-        fields={reservationModal}
-        onSubmit={() =>
-          editItem(
-            formData,
-            API["Reservation"],
-            "photosessions",
-            setContent,
-            handleClose
-          )
-        }
-        submitButtonText="Сохранить"
-      />
-      <UniversalModalForm
-        show={show && modalType === "editPhotosessionModal"}
-        onHide={() => handleClose()}
-        formData={formData}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        title="Редактировать съемку"
-        fields={editPhotosessionModal}
-        onSubmit={() =>
-          editItem(
-            formData,
-            API["EditMain"],
-            "photosessions",
-            setPhotosessions,
-            handleClose
-          )
-        }
-        submitButtonText="Сохранить"
-      />
-      <UniversalModalForm
-        show={show && modalType === "addClassLog"}
-        onHide={() => handleClose()}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        formData={{ formData, CallDate: new Date().toISOString().slice(0, 10) }}
-        title="Добавление лога"
-        fields={addLogForm}
-        onSubmit={() =>
-          addItem(
-            formData,
-            API["AddLog"],
-            "photosessions",
-            setPhotosessions,
-            handleClose
-          )
-        }
-        submitButtonText="Добавить"
-      />
-
-      <UniversalModalForm
-        show={show && modalType === "editClassLog"}
-        onHide={() => handleClose()}
-        formData={formData}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        title="Редактировать лог"
-        fields={editLogModal}
-        onSubmit={() =>
-          editItem(
-            formData,
-            API["EditLog"],
-            "photosessions",
-            setPhotosessions,
-            handleClose
-          )
-        }
-        submitButtonText="Сохранить"
-      />
-      <DeleteModal
-        show={show && modalType === "delete"}
-        onHide={() => handleClose()}
-        onConfirm={() =>
-          deleteItem(formData, API["Delete"], setContent, handleClose)
-        }
       />
     </>
   );

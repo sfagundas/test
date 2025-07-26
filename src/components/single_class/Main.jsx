@@ -1,13 +1,107 @@
-import { Card, Dropdown, Row, Col, Button } from "react-bootstrap";
+import {
+  Card,
+  Dropdown,
+  Row,
+  Col,
+  Button,
+  Modal,
+  Spinner,
+} from "react-bootstrap";
 
 import React from "react";
 import { useState, useEffect } from "react";
-import { API } from "./commonfunction";
-export default function Main({ content, controlFormData, classId }) {
+import {
+  openModal,
+  API,
+  formEdit,
+  addItem,
+  editItem,
+  deleteItem,
+} from "../single_class/commonfunction";
+
+import UniversalModalForm from "../forms/UniversalModalForm";
+import { addLogForm, editLogModal } from "../forms/ExportForms";
+
+import OkBadgeDateMain from "../custom/OkBadgeDateMain";
+
+const DeleteModal = ({ show, onHide, onConfirm }) => {
+  return (
+    <Modal show={show} onHide={onHide}>
+      <Modal.Header closeButton>
+        <Modal.Title>Удалить лог</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        Вы уверены, что хотите безвозвратно удалить запись?
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Отмена
+        </Button>
+        <Button variant="danger" onClick={onConfirm}>
+          Подтвердить
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+export default function Main({ content, classId }) {
+  const formDataContent = {
+    Id: "",
+  };
+
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [logs, setLogs] = useState([]);
-  console.log(content);
+
+  const [modalType, setModalType] = useState();
+  const [show, setShow] = useState(false);
+  const [formData, setFormData] = useState(formDataContent);
+
+  function getCurrentDateTime() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+
+  const controlFormData = (type, data) => {
+    setModalType(type);
+
+    if (type === "editMainInfo") {
+      setFormData(data);
+    } else if (type === "addClassLog") {
+      setFormData({
+        ClassId: classId,
+        DateTime: getCurrentDateTime(),
+      });
+    } else if (type === "editClassLog") {
+      setFormData({
+        Id: data.Id,
+        Text: data.Text,
+        DateTime: getCurrentDateTime(),
+      });
+    } else if (type === "delete") {
+      setFormData({ Id: data });
+    }
+
+    openModal(type, setShow);
+  };
+
+  const setFD = () => {
+    setFormData(formDataContent);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    setFD();
+  };
 
   useEffect(() => {
     // Функция для получения данных из API
@@ -31,6 +125,31 @@ export default function Main({ content, controlFormData, classId }) {
 
     fetchData(); // Вызываем функцию для получения данных
   }, []);
+
+  if (isLoading) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
+  }
+
+  // if (error) {
+  //   return (
+  //     <div className="alert alert-danger m-3">
+  //       Error loading data: {error}
+  //       <Link to="/classes" className="ms-2">
+  //         Назад
+  //       </Link>
+  //     </div>
+  //   );
+  // }
+
   return (
     <>
       <Row>
@@ -62,8 +181,6 @@ export default function Main({ content, controlFormData, classId }) {
                       </Dropdown>
                     </div>
                   </div>
-
-                  {/* Основная информация */}
                   <div className="mb-2 text-body-secondary row">
                     <Row>
                       <Col>
@@ -119,9 +236,7 @@ export default function Main({ content, controlFormData, classId }) {
                 variant="light"
                 size="sm"
                 onClick={() => {
-                  const currentDate = new Date().toISOString().slice(0, 10);
-                  controlFormData("addClassLog", { CallDate: currentDate });
-                  console.log(currentDate);
+                  controlFormData("addClassLog", classId);
                 }}
               >
                 <i className="bi bi-plus-lg"></i>
@@ -132,7 +247,7 @@ export default function Main({ content, controlFormData, classId }) {
                 <div key={log.Id} className="mb-3 p-2 border-bottom">
                   <div className="d-flex justify-content-between align-items-start">
                     <div>
-                      <strong>{log.DateTime}</strong>
+                      <OkBadgeDateMain date={log.DateTime} />
                       <div>{log.Text}</div>
                     </div>
                     <div>
@@ -140,7 +255,7 @@ export default function Main({ content, controlFormData, classId }) {
                         variant="outline-secondary"
                         size="sm"
                         className="me-2"
-                        onClick={() => controlFormData("editClassLog", log.Id)}
+                        onClick={() => controlFormData("editClassLog", log)}
                       >
                         <i className="bi bi-pencil"></i>
                       </Button>
@@ -159,6 +274,50 @@ export default function Main({ content, controlFormData, classId }) {
           </Card>
         </Col>
       </Row>
+      <UniversalModalForm
+        show={show && modalType === "addClassLog"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Добавление лога"
+        fields={addLogForm}
+        onSubmit={() =>
+          addItem(formData, API["AddLog"], "single_class", setLogs, handleClose)
+        }
+        submitButtonText="Добавить"
+      />
+
+      <UniversalModalForm
+        show={show && modalType === "editClassLog"}
+        onHide={() => handleClose()}
+        formData={formData}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        title="Редактировать лог"
+        fields={editLogModal}
+        onSubmit={() =>
+          editItem(
+            formData,
+            API["EditLog"],
+            "single_class",
+            setLogs,
+            handleClose
+          )
+        }
+        submitButtonText="Сохранить"
+      />
+      <DeleteModal
+        show={show && modalType === "delete"}
+        onHide={() => handleClose()}
+        onConfirm={() =>
+          deleteItem(
+            formData,
+            API["DeleteLog"],
+            "single_class",
+            setLogs,
+            handleClose
+          )
+        }
+      />
     </>
   );
 }

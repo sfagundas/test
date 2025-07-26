@@ -150,6 +150,13 @@ function AllPhotosessions() {
         CallDate: data.CallDate,
       });
     } else if (type === "reservationModal") {
+      setFormData({
+        Id: data.Id,
+        Date: data.Date,
+        Photographer: data.Photographer,
+        ContactName: data.ContactName,
+        Phone: data.Phone,
+      });
     } else if (type === "editPhotosessionModal") {
       setFormData({
         Id: data.Id,

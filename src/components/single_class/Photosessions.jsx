@@ -1,6 +1,96 @@
 import { Card, Dropdown, Row, Col, Badge } from "react-bootstrap";
+
+import React from "react";
+import { useState, useEffect } from "react";
+import {
+  openModal,
+  API,
+  formEdit,
+  addItem,
+  editItem,
+  deleteItem,
+} from "../single_class/commonfunction";
+
+import UniversalModalForm from "../forms/UniversalModalForm";
+
 import OkBadgeDate from "../custom/OkBadgeDate";
-export default function Photosessions({ content, controlFormData }) {
+
+import {
+  callDate,
+  reservationModal,
+  editPhotosessionModal,
+} from "../forms/ExportForms";
+
+export default function Photosessions({ classId }) {
+  const formDataContent = {
+    Id: "",
+  };
+
+  const [modalType, setModalType] = useState();
+  const [show, setShow] = useState(false);
+  const [formData, setFormData] = useState(formDataContent);
+
+  const controlFormData = (type, data) => {
+    setModalType(type);
+    if (type === "callDate") {
+      setFormData({
+        Id: data.Id,
+        CallDate: data.CallDate,
+      });
+    } else if (type === "reservationModal") {
+      setFormData({
+        Id: data.Id,
+        Date: data.Date,
+        Photographer: data.Photographer,
+        ContactName: data.ContactName,
+        Phone: data.Phone,
+      });
+    } else if (type === "editPhotosessionModal") {
+      setFormData({
+        Id: data.Id,
+        PhTypeId: data.PhTypeId,
+        Price: data.Price,
+        LocationId: data.LocationId,
+      });
+    }
+
+    openModal(type, setShow);
+  };
+
+  const setFD = () => {
+    setFormData(formDataContent);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    setFD();
+  };
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [content, setContent] = useState([]);
+  useEffect(() => {
+    // Функция для получения данных из API
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `http://okalbm.ru/api/photosessions/ph_class_photosessions/${classId}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setContent(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData(); // Вызываем функцию для получения данных
+  }, []);
   return (
     <>
       <Row>
@@ -80,6 +170,60 @@ export default function Photosessions({ content, controlFormData }) {
           </Col>
         ))}
       </Row>
+      <UniversalModalForm
+        show={show && modalType === "callDate"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Дата связи"
+        fields={callDate}
+        onSubmit={() =>
+          editItem(
+            formData,
+            API["CallDate"],
+            "photosessions",
+            setContent,
+            handleClose
+          )
+        }
+        submitButtonText="Сохранить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "reservationModal"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Забронировать"
+        fields={reservationModal}
+        onSubmit={() =>
+          editItem(
+            formData,
+            API["Reservation"],
+            "photosessions",
+            setContent,
+            handleClose
+          )
+        }
+        submitButtonText="Сохранить"
+      />
+      <UniversalModalForm
+        show={show && modalType === "editPhotosessionModal"}
+        onHide={() => handleClose()}
+        formData={formData}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        title="Редактировать съемку"
+        fields={editPhotosessionModal}
+        onSubmit={() =>
+          editItem(
+            formData,
+            API["EditMain"],
+            "photosessions",
+            setContent,
+            handleClose
+          )
+        }
+        submitButtonText="Сохранить"
+      />
     </>
   );
 }

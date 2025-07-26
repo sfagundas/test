@@ -105,13 +105,6 @@ export const addLogForm = [
     type: "textarea",
     required: true,
   },
-  {
-    name: "DateTime",
-    type: "hidden",
-    required: true,
-    defaultValue: new Date().toISOString().slice(0, 10),
-    readOnly: true,
-  },
 ];
 
 export const editLogModal = [
@@ -119,6 +112,57 @@ export const editLogModal = [
     name: "Text",
     label: "Комментарий",
     type: "textarea",
+    required: true,
+  },
+];
+
+export const editOrderForm = [
+  {
+    name: "det_AllStudents",
+    label: "Студенты",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "det_BuyStudents",
+    label: "Покупатели Студенты",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "det_TeacherAlbum",
+    label: "Альбом Учителя",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "det_AlbTypedId",
+    label: "Пакет услуг",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "det_PhCount",
+    label: "Количество фотосессий",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "det_AlbumPrice",
+    label: "Цена за альбом",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "det_AdditionalServices",
+    label: "Доп услуги",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "det_AllPrice",
+    label: "Окончательная цена",
+    type: "text",
     required: true,
   },
 ];
