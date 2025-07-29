@@ -14,7 +14,7 @@ import {
 import { Link } from "react-router-dom";
 
 import UniversalModalForm from "./forms/UniversalModalForm";
-import { addPhotosessionForm, editMainInfoForm } from "./forms/ExportForms";
+import { addPhotosessionForm } from "./forms/ExportForms";
 
 import Main from "./single_class/Main";
 import Details from "./single_class/Details";
@@ -215,11 +215,6 @@ export default function Class() {
                   className="d-flex justify-content-between"
                 >
                   <span>Основная информация</span>
-                  <div>
-                    <Badge pill bg="light" text="dark">
-                      {notifications.main}
-                    </Badge>
-                  </div>
                 </Nav.Link>
               </Nav.Item>
 
@@ -229,11 +224,6 @@ export default function Class() {
                   className="d-flex justify-content-between"
                 >
                   <span>Детали класса</span>
-                  <div>
-                    <Badge pill bg="light" text="dark">
-                      {notifications.details}
-                    </Badge>
-                  </div>
                 </Nav.Link>
               </Nav.Item>
 
@@ -243,11 +233,6 @@ export default function Class() {
                   className="d-flex justify-content-between"
                 >
                   <span>Фотосъёмки</span>
-                  <div>
-                    <Badge pill bg="light" text="dark">
-                      {notifications.photosessions}
-                    </Badge>
-                  </div>
                 </Nav.Link>
               </Nav.Item>
 
@@ -257,11 +242,6 @@ export default function Class() {
                   className="d-flex justify-content-between"
                 >
                   <span>Классы</span>
-                  <div>
-                    <Badge pill bg="light" text="dark">
-                      {notifications.class}
-                    </Badge>
-                  </div>
                 </Nav.Link>
               </Nav.Item>
 
@@ -271,11 +251,6 @@ export default function Class() {
                   className="d-flex justify-content-between"
                 >
                   <span>Учителя</span>
-                  <div>
-                    <Badge pill bg="light" text="dark">
-                      {notifications.teachers}
-                    </Badge>
-                  </div>
                 </Nav.Link>
               </Nav.Item>
             </Nav>
@@ -284,7 +259,7 @@ export default function Class() {
           <Col xxl={10} xl={9} lg={9} md={8} sm={7}>
             <Tab.Content>
               <Tab.Pane eventKey="main" title="main">
-                <Main content={content} classId={class_id} />
+                <Main classId={class_id} />
               </Tab.Pane>
 
               <Tab.Pane eventKey="details" title="details">
@@ -296,38 +271,16 @@ export default function Class() {
               </Tab.Pane>
 
               <Tab.Pane eventKey="class" title="class">
-                <ClassMain
-                  content={content}
-                  controlFormData={controlFormData}
-                />
+                <ClassMain controlFormData={controlFormData} />
               </Tab.Pane>
 
               <Tab.Pane eventKey="teachers" title="teachers">
-                <Teachers content={content} controlFormData={controlFormData} />
+                <Teachers controlFormData={controlFormData} />
               </Tab.Pane>
             </Tab.Content>
           </Col>
         </Row>
       </Tab.Container>
-
-      <UniversalModalForm
-        show={show && modalType === "editMainInfo"}
-        onHide={() => handleClose()}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        formData={formData}
-        title="Редактировать основную информацию"
-        fields={editMainInfoForm}
-        onSubmit={() =>
-          editItem(
-            formData,
-            API["EditMain"],
-            "single_class",
-            setContent,
-            handleClose
-          )
-        }
-        submitButtonText="Сохранить"
-      />
 
       <UniversalModalForm
         show={show && modalType === "addPhotosession"}

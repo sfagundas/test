@@ -20,7 +20,11 @@ import {
 } from "../single_class/commonfunction";
 
 import UniversalModalForm from "../forms/UniversalModalForm";
-import { addLogForm, editLogModal } from "../forms/ExportForms";
+import {
+  editMainInfoForm,
+  addLogForm,
+  editLogModal,
+} from "../forms/ExportForms";
 
 import OkBadgeDateMain from "../custom/OkBadgeDateMain";
 
@@ -44,13 +48,15 @@ const DeleteModal = ({ show, onHide, onConfirm }) => {
     </Modal>
   );
 };
-export default function Main({ content, classId }) {
+export default function Main({ classId }) {
   const formDataContent = {
     Id: "",
   };
 
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [content, setContent] = useState([]);
   const [logs, setLogs] = useState([]);
 
   const [modalType, setModalType] = useState();
@@ -125,6 +131,29 @@ export default function Main({ content, classId }) {
 
     fetchData(); // Вызываем функцию для получения данных
   }, []);
+
+  useEffect(() => {
+    // Функция для получения данных из API
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `http://okalbm.ru/api/single_class/${API["GetMainInfo"]}/${classId}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setContent(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData(); // Вызываем функцию для получения данных
+  }, [classId]);
 
   if (isLoading) {
     return (
@@ -274,6 +303,24 @@ export default function Main({ content, classId }) {
           </Card>
         </Col>
       </Row>
+      <UniversalModalForm
+        show={show && modalType === "editMainInfo"}
+        onHide={() => handleClose()}
+        onFormChange={(e) => formEdit(e, setFormData)}
+        formData={formData}
+        title="Редактировать основную информацию"
+        fields={editMainInfoForm}
+        onSubmit={() =>
+          editItem(
+            formData,
+            API["EditMain"],
+            "single_class",
+            setContent,
+            handleClose
+          )
+        }
+        submitButtonText="Сохранить"
+      />
       <UniversalModalForm
         show={show && modalType === "addClassLog"}
         onHide={() => handleClose()}

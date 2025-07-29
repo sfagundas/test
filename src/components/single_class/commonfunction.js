@@ -5,6 +5,7 @@ export const API = {
   EditMain: "edit_main_info",
   Reservation: "add_reservation",
   AddPhotosession: "add_photosession",
+  GetOrder: "get_order",
   EditOrder: "edit_order", //details
   CallDate: "edit_call_date",
   GetLog: "get_class_log",

@@ -4,6 +4,7 @@ import CitySelect from "../custom/SelectCities";
 import SelectCRMstatus from "../custom/SelectCRMstatus";
 import SelectPhotographers from "../custom/SelectPhotographers";
 import SelectLocation from "../custom/SelectLocation";
+import AlbTypeSelect from "../custom/AlbTypeSelect";
 
 const UniversalForm = ({
   fields,
@@ -15,6 +16,16 @@ const UniversalForm = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit();
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    onFormChange({
+      target: {
+        name,
+        value: checked ? "1" : "0", // Преобразуем в "1" или "0"
+      },
+    });
   };
 
   // Группируем поля по строкам
@@ -37,7 +48,15 @@ const UniversalForm = ({
             <Col className="mb-2" key={field.name} sm={field.colSize || 12}>
               <Form.Group>
                 <Form.Label>{field.label}</Form.Label>
-                {field.type === "textarea" ? (
+                {field.type === "checkbox" ? (
+                  <Form.Check
+                    type="checkbox"
+                    id={field.name}
+                    name={field.name}
+                    checked={String(formData[field.name]) === "1"} // Надежное сравнение
+                    onChange={handleCheckboxChange}
+                  />
+                ) : field.type === "textarea" ? (
                   <Form.Control
                     as="textarea"
                     rows={3}
@@ -45,7 +64,7 @@ const UniversalForm = ({
                     value={formData[field.name] || ""}
                     onChange={onFormChange}
                     required={field.required}
-                    autoComplete="off" // 3. Для textarea
+                    autoComplete="off"
                   />
                 ) : field.type === "phTypeSelect" ? (
                   <PhTypeSelect
@@ -59,6 +78,11 @@ const UniversalForm = ({
                   />
                 ) : field.type === "selectPhotographers" ? (
                   <SelectPhotographers
+                    onChange={onFormChange}
+                    value={formData[field.name]}
+                  />
+                ) : field.type === "selectAlbType" ? (
+                  <AlbTypeSelect
                     onChange={onFormChange}
                     value={formData[field.name]}
                   />

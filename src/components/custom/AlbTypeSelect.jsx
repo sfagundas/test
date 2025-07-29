@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 
-const LocationSelect = ({ id, onChange }) => {
+const ALbTypeSelect = ({ id, onChange }) => {
   // Деструктурируем id из props
-  const [Location, setLocation] = useState([]);
+  const [AlbType, setAlbType] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -10,12 +10,14 @@ const LocationSelect = ({ id, onChange }) => {
     // Функция для получения списка статусов
     const fetchLocation = async () => {
       try {
-        const response = await fetch("http://okalbm.ru/api/api/locations_list");
+        const response = await fetch(
+          "http://okalbm.ru/api/api/album_types_list"
+        );
         if (!response.ok) {
           throw new Error("Ошибка при получении данных");
         }
         const data = await response.json();
-        setLocation(data);
+        setAlbType(data);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -38,12 +40,12 @@ const LocationSelect = ({ id, onChange }) => {
       <div className={`mb-3`}>
         <select
           className="form-control"
-          name="LocationId"
-          id="LocationId"
+          name="det_AlbTypeId"
+          id="det_AlbTypeId"
           onChange={onChange}
           required
         >
-          {Location.map((item) => (
+          {AlbType.map((item) => (
             <option
               key={item.Id}
               value={item.Id}
@@ -58,4 +60,4 @@ const LocationSelect = ({ id, onChange }) => {
   );
 };
 
-export default LocationSelect;
+export default ALbTypeSelect;

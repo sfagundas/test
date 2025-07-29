@@ -21,55 +21,6 @@ import {
 import UniversalModalForm from "../forms/UniversalModalForm";
 import { editOrderForm } from "../forms/ExportForms";
 
-const EditOrderModal = ({ show, onHide, formData, onFormChange, onSave }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave();
-  };
-
-  return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>Редактировать заказ</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <input type="hidden" name="Id" value={formData.Id} />
-          <Row>
-            <Col sm={12}>
-              <Form.Group className="mb-3" controlId="ClientName">
-                <Form.Label>Клиент</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text id="inputClientNamePrepend">
-                    <i className="bi bi-camera"></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="text"
-                    name="ClientName"
-                    placeholder="Название"
-                    onChange={onFormChange}
-                    value={formData.ClientName}
-                    aria-describedby="inputClientNamePrepend"
-                    required
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={onHide}>
-              Отмена
-            </Button>
-            <Button variant="warning" type="submit">
-              Добавить
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  );
-};
-
 export default function Details({ classId }) {
   const formDataContent = {
     Id: "",
@@ -77,19 +28,7 @@ export default function Details({ classId }) {
 
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [content, setContent] = useState([
-    {
-      Id: 1,
-      det_AllStudents: "25 студентов",
-      det_BuyStudents: "18 покупают",
-      det_TeacherAlbum: "Да",
-      det_AlbTypedId: "Премиум пакет",
-      det_PhCount: "2 фотосессии",
-      det_AlbumPrice: "1500 руб.",
-      det_AdditionalServices: "Ретушь, дизайн",
-      det_AllPrice: "32000 руб.",
-    },
-  ]);
+  const [content, setContent] = useState([]);
   const [modalType, setModalType] = useState();
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState(formDataContent);
@@ -99,11 +38,11 @@ export default function Details({ classId }) {
 
     if (type === "editOrder") {
       setFormData({
-        Id: data,
+        Id: data.Id,
         det_AllStudents: data.det_AllStudents,
         det_BuyStudents: data.det_BuyStudents,
         det_TeacherAlbum: data.det_TeacherAlbum,
-        det_AlbTypedId: data.det_AlbTypedId,
+        det_AlbTypeId: data.det_AlbTypeId,
         det_PhCount: data.det_PhCount,
         det_AlbumPrice: data.det_AlbumPrice,
         det_AdditionalServices: data.det_AdditionalServices,
@@ -123,28 +62,28 @@ export default function Details({ classId }) {
     setFD();
   };
 
-  // useEffect(() => {
-  //   // Функция для получения данных из API
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `http://okalbm.ru/api/single_class/${API["GetMainInfo"]}/${classId}`
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Network response was not ok");
-  //       }
-  //       const data = await response.json();
-  //       setContent(data);
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //       setError(error.message);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    // Функция для получения данных из API
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `http://okalbm.ru/api/single_class/${API["GetOrder"]}/${classId}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setContent(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  //   fetchData(); // Вызываем функцию для получения данных
-  // }, [classId]);
+    fetchData(); // Вызываем функцию для получения данных
+  }, [classId]);
 
   return (
     <>
@@ -172,56 +111,59 @@ export default function Details({ classId }) {
                   <div className="mb-2 text-body-secondary row">
                     <Row>
                       <Col>
-                        <small>{item.det_AllStudents}</small>
+                        <small>Студенты: {item.det_AllStudents}</small>
                       </Col>
                     </Row>
                   </div>
                   <div className="mb-2 text-body-secondary row">
                     <Row>
                       <Col>
-                        <small>{item.det_BuyStudents}</small>
+                        <small>
+                          Покупатели Студенты: {item.det_BuyStudents}
+                        </small>
                       </Col>
                     </Row>
                   </div>
                   <div className="mb-2 text-body-secondary row">
                     <Row>
                       <Col>
-                        <small>{item.det_TeacherAlbum}</small>
+                        Альбом учителя:{" "}
+                        {item.det_TeacherAlbum === "1" ? "Да" : "Нет"}
                       </Col>
                     </Row>
                   </div>
                   <div className="mb-2 text-body-secondary row">
                     <Row>
                       <Col>
-                        <small>{item.det_AlbTypedId}</small>
+                        <small>Пакет услуг: {item.det_AlbTypeId}</small>
                       </Col>
                     </Row>
                   </div>
                   <div className="mb-2 text-body-secondary row">
                     <Row>
                       <Col>
-                        <small>{item.det_PhCount}</small>
+                        <small>Количество фотосессий: {item.det_PhCount}</small>
                       </Col>
                     </Row>
                   </div>
                   <div className="mb-2 text-body-secondary row">
                     <Row>
                       <Col>
-                        <small>{item.det_AlbumPrice}</small>
+                        <small>Цена за альбом: {item.det_AlbumPrice}</small>
                       </Col>
                     </Row>
                   </div>
                   <div className="mb-2 text-body-secondary row">
                     <Row>
                       <Col>
-                        <small>{item.det_AdditionalServices}</small>
+                        <small>Доп услуги: {item.det_AdditionalServices}</small>
                       </Col>
                     </Row>
                   </div>
                   <div className="mb-2 text-body-secondary row">
                     <Row>
                       <Col>
-                        <small>{item.det_AllPrice}</small>
+                        <small>Окончательная цена: {item.det_AllPrice}</small>
                       </Col>
                     </Row>
                   </div>
