@@ -20,11 +20,8 @@ import {
 } from "../single_class/commonfunction";
 
 import UniversalModalForm from "../forms/UniversalModalForm";
-import {
-  addClassMainForm,
-  multiAddClassMainForm,
-  editClassMainModal,
-} from "../forms/ExportForms";
+import MultiAddModal from "../forms/MultiAddModal";
+import { addClassMainForm, editClassMainModal } from "../forms/ExportForms";
 
 const DeleteModal = ({ show, onHide, onConfirm }) => {
   return (
@@ -76,17 +73,13 @@ export default function Class({ classId }) {
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState(formDataContent);
 
+  const [showMultiAdd, setShowMultiAdd] = useState(false);
+
   const controlFormData = (type, data) => {
     setModalType(type);
     if (type === "addClassMain") {
       setFormData({
         ClassId: classId,
-      });
-    } else if (type === "multiAdd") {
-      setFormData({
-        Id: data.Id,
-        FirstName: data.FirstName,
-        LastName: data.LastName,
       });
     } else if (type === "editClassMain") {
       setFormData({
@@ -108,47 +101,6 @@ export default function Class({ classId }) {
   const handleClose = () => {
     setShow(false);
     setFD();
-  };
-
-  const [multiAddFields] = useState([
-    {
-      name: "studentsData",
-      label: "Данные учеников",
-      type: "multiline",
-      placeholder: "Иванов Алексей\nПетрова Мария\n...",
-      helpText: "Введите фамилии и имена учеников, каждый с новой строки",
-      required: true,
-      rows: 10,
-    },
-  ]);
-
-  const handleMultiAdd = (formData) => {
-    const lines = formData.studentsData
-      .split("\n")
-      .filter((line) => line.trim() !== "");
-
-    if (lines.some((line) => line.trim().split(/\s+/).length < 2)) {
-      alert(
-        "Некоторые строки имеют неправильный формат. Используйте 'Фамилия Имя'"
-      );
-      return;
-    }
-
-    const studentsData = lines.map((line) => {
-      const [LastName, FirstName] = line.trim().split(/\s+/);
-      return {
-        FirstName: FirstName || "",
-        LastName: LastName || "",
-        ClassId: classId,
-      };
-    });
-
-    studentsData.forEach((student) => {
-      addItem(student, API["AddLog"], "single_class", setContent, () => {});
-    });
-
-    setShow(false);
-    setFormData(formDataContent);
   };
 
   // useEffect(() => {
@@ -206,9 +158,7 @@ export default function Class({ classId }) {
                 <Button
                   variant="light"
                   size="sm"
-                  onClick={() => {
-                    controlFormData("multiAdd", classId);
-                  }}
+                  onClick={() => setShowMultiAdd(true)}
                 >
                   <i className="bi bi-plus-square-dotted"></i>
                 </Button>
@@ -299,16 +249,22 @@ export default function Class({ classId }) {
         }
       />
 
-      <UniversalModalForm
-        show={show && modalType === "multiAdd"}
-        onHide={handleClose}
-        formData={formData}
-        onFormChange={(e) => formEdit(e, setFormData)}
-        title="Добавление нескольких учеников"
-        fields={multiAddClassMainForm}
-        isMultiAdd={true}
-        multiAddHandler={handleMultiAdd}
-        submitButtonText="Добавить учеников"
+      <MultiAddModal
+        show={showMultiAdd}
+        onHide={() => setShowMultiAdd(false)}
+        onSubmit={(studentsData) => {
+          // Для каждого ученика вызываем addItem
+          studentsData.forEach((student) => {
+            addItem(
+              student,
+              API["AddLog"],
+              "single_class",
+              setContent,
+              () => {} // Не закрываем модалку после каждого добавления
+            );
+          });
+          handleClose(); // Закрываем модалку после всех добавлений
+        }}
       />
     </>
   );

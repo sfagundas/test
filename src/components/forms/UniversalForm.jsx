@@ -56,22 +56,6 @@ const UniversalForm = ({
                     checked={String(formData[field.name]) === "1"} // Надежное сравнение
                     onChange={handleCheckboxChange}
                   />
-                ) : field.type === "multiline" ? (
-                  <>
-                    <Form.Control
-                      as="textarea"
-                      rows={field.rows || 5}
-                      name={field.name}
-                      value={formData[field.name] || ""}
-                      onChange={onFormChange}
-                      placeholder={field.placeholder}
-                    />
-                    {field.helpText && (
-                      <Form.Text className="text-muted">
-                        {field.helpText}
-                      </Form.Text>
-                    )}
-                  </>
                 ) : field.type === "textarea" ? (
                   <Form.Control
                     as="textarea"
