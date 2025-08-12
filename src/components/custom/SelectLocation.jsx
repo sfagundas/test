@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const LocationSelect = ({ id, onChange }) => {
+const LocationSelect = ({ value, onChange }) => {
   // Деструктурируем id из props
   const [Location, setLocation] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +47,7 @@ const LocationSelect = ({ id, onChange }) => {
             <option
               key={item.Id}
               value={item.Id}
-              selected={item.Id === id} // Устанавливаем selected, если id совпадает
+              selected={item.Id === value} // Устанавливаем selected, если id совпадает
             >
               {item.Name}
             </option>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const CRMstatusSelect = ({ id, onChange }) => {
+const CRMstatusSelect = ({ value, onChange }) => {
   // Деструктурируем id из props
   const [CRMstatus, setCRMstatus] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ const CRMstatusSelect = ({ id, onChange }) => {
             <option
               key={crm.Id}
               value={crm.Id}
-              selected={crm.Id === id} // Устанавливаем selected, если id совпадает
+              selected={crm.Id === value} // Устанавливаем selected, если id совпадает
             >
               {crm.Name}
             </option>

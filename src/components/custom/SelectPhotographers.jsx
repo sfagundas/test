@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const PhotographersSelect = ({ id, onChange }) => {
+const PhotographersSelect = ({ value, onChange }) => {
   // Деструктурируем id из props
   const [Photographers, setPhotographers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ const PhotographersSelect = ({ id, onChange }) => {
             <option
               key={item.Id}
               value={item.Id}
-              selected={item.Id === id} // Устанавливаем selected, если id совпадает
+              selected={item.Id === value} // Устанавливаем selected, если id совпадает
             >
               {item.Name}
             </option>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const ALbTypeSelect = ({ id, onChange }) => {
+const ALbTypeSelect = ({ value, onChange }) => {
   // Деструктурируем id из props
   const [AlbType, setAlbType] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -8,7 +8,7 @@ const ALbTypeSelect = ({ id, onChange }) => {
 
   useEffect(() => {
     // Функция для получения списка статусов
-    const fetchLocation = async () => {
+    const fetchAlbType = async () => {
       try {
         const response = await fetch(
           "http://okalbm.ru/api/api/album_types_list"
@@ -25,9 +25,8 @@ const ALbTypeSelect = ({ id, onChange }) => {
       }
     };
 
-    fetchLocation();
+    fetchAlbType();
   }, []);
-
   if (loading) {
     return <div>Загрузка...</div>;
   }
@@ -49,7 +48,7 @@ const ALbTypeSelect = ({ id, onChange }) => {
             <option
               key={item.Id}
               value={item.Id}
-              selected={item.Id === id} // Устанавливаем selected, если id совпадает
+              selected={item.Id === value} // Устанавливаем selected, если id совпадает
             >
               {item.Name}
             </option>

@@ -4,7 +4,7 @@ import CitySelect from "../custom/SelectCities";
 import SelectCRMstatus from "../custom/SelectCRMstatus";
 import SelectPhotographers from "../custom/SelectPhotographers";
 import SelectLocation from "../custom/SelectLocation";
-import AlbTypeSelect from "../custom/AlbTypeSelect";
+import SelectAlbType from "../custom/AlbTypeSelect";
 
 const UniversalForm = ({
   fields,
@@ -56,6 +56,22 @@ const UniversalForm = ({
                     checked={String(formData[field.name]) === "1"} // Надежное сравнение
                     onChange={handleCheckboxChange}
                   />
+                ) : field.type === "multiline" ? (
+                  <>
+                    <Form.Control
+                      as="textarea"
+                      rows={field.rows || 5}
+                      name={field.name}
+                      value={formData[field.name] || ""}
+                      onChange={onFormChange}
+                      placeholder={field.placeholder}
+                    />
+                    {field.helpText && (
+                      <Form.Text className="text-muted">
+                        {field.helpText}
+                      </Form.Text>
+                    )}
+                  </>
                 ) : field.type === "textarea" ? (
                   <Form.Control
                     as="textarea"
@@ -82,7 +98,7 @@ const UniversalForm = ({
                     value={formData[field.name]}
                   />
                 ) : field.type === "selectAlbType" ? (
-                  <AlbTypeSelect
+                  <SelectAlbType
                     onChange={onFormChange}
                     value={formData[field.name]}
                   />

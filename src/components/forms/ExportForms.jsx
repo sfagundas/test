@@ -13,7 +13,7 @@ export const editPhotosessionModal = [
     required: true,
     colSize: 6,
   },
-  { name: "v", label: "Оплата", type: "text", colSize: 6 },
+  { name: "Price", label: "Оплата", type: "text", colSize: 6 },
 ];
 
 //Форма изменения даты
@@ -107,11 +107,56 @@ export const addLogForm = [
   },
 ];
 
-export const editLogModal = [
+export const editLogForm = [
   {
     name: "Text",
     label: "Комментарий",
     type: "textarea",
+    required: true,
+  },
+];
+
+export const addClassMainForm = [
+  {
+    name: "FirstName",
+    label: "Имя",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "LastName",
+    label: "Фамилия",
+    type: "text",
+    required: true,
+  },
+];
+
+export const multiAddClassMainForm = [
+  {
+    name: "FirstName",
+    label: "Имя",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "LastName",
+    label: "Фамилия",
+    type: "text",
+    required: true,
+  },
+];
+
+export const editClassMainModal = [
+  {
+    name: "FirstName",
+    label: "Имя",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "LastName",
+    label: "Фамилия",
+    type: "text",
     required: true,
   },
 ];
