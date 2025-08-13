@@ -5,7 +5,7 @@ import { Button, Spinner, Row, Col, Badge, Tab, Nav } from "react-bootstrap";
 
 import Main from "./single_class/Main";
 import Photosessions from "./single_class/Photosessions";
-import ClassMain from "./single_class/ClassMain";
+import ClassMain from "./single_class/ClassPeople";
 import Teachers from "./single_class/Teachers";
 
 export default function Class() {

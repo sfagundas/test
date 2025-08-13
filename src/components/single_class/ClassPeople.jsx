@@ -17,11 +17,11 @@ import {
   addItem,
   editItem,
   deleteItem,
-} from "../single_class/commonfunction";
+} from "./commonfunction";
 
 import UniversalModalForm from "../forms/UniversalModalForm";
 import MultiAddModal from "../forms/MultiAddModal";
-import { addClassMainForm, editClassMainModal } from "../forms/ExportForms";
+import { addClassPeopleForm, editClassPeopleForm } from "../forms/ExportForms";
 
 const DeleteModal = ({ show, onHide, onConfirm }) => {
   return (
@@ -47,45 +47,39 @@ const DeleteModal = ({ show, onHide, onConfirm }) => {
 export default function Class({ classId }) {
   const formDataContent = {
     Id: "",
+    Name: "",
+    LastName: "",
+    PersonalText: "",
+    Associations: "",
+    Portrait: "",
+    PortraitPath: "",
   };
 
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [content, setContent] = useState([
-    { Id: 1, FirstName: "Алексей", LastName: "Иванов" },
-    { Id: 2, FirstName: "Мария", LastName: "Петрова" },
-    { Id: 3, FirstName: "Иван", LastName: "Сидоров" },
-    { Id: 4, FirstName: "Екатерина", LastName: "Смирнова" },
-    { Id: 5, FirstName: "Дмитрий", LastName: "Кузнецов" },
-    { Id: 6, FirstName: "Анна", LastName: "Васильева" },
-    { Id: 7, FirstName: "Сергей", LastName: "Попов" },
-    { Id: 8, FirstName: "Ольга", LastName: "Новикова" },
-    { Id: 9, FirstName: "Андрей", LastName: "Федоров" },
-    { Id: 10, FirstName: "Наталья", LastName: "Морозова" },
-    { Id: 11, FirstName: "Павел", LastName: "Волков" },
-    { Id: 12, FirstName: "Елена", LastName: "Алексеева" },
-    { Id: 13, FirstName: "Михаил", LastName: "Лебедев" },
-    { Id: 14, FirstName: "Светлана", LastName: "Семенова" },
-    { Id: 15, FirstName: "Артем", LastName: "Егоров" },
-  ]);
+  const [content, setContent] = useState([]);
 
   const [modalType, setModalType] = useState();
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState(formDataContent);
 
-  const [showMultiAdd, setShowMultiAdd] = useState(false);
-
   const controlFormData = (type, data) => {
     setModalType(type);
-    if (type === "addClassMain") {
+    if (type === "addClassPeople") {
       setFormData({
         ClassId: classId,
-      });
-    } else if (type === "editClassMain") {
-      setFormData({
-        Id: data.Id,
-        FirstName: data.FirstName,
+        Name: data.Name,
         LastName: data.LastName,
+      });
+    } else if (type === "editClassPeople") {
+      console.log(data);
+      setFormData({
+        Id: data.Id || "",
+        Name: data.Name || "",
+        LastName: data.LastName || "",
+        PersonalText: data.PersonalText || "",
+        Associations: data.Associations || "",
+        Portrait: data.Portrait || "",
       });
     } else if (type === "delete") {
       setFormData({ Id: data });
@@ -103,41 +97,41 @@ export default function Class({ classId }) {
     setFD();
   };
 
-  // useEffect(() => {
-  //   // Функция для получения данных из API
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `http://okalbm.ru/api/single_class/${API["GetLog"]}/${classId}`
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Network response was not ok");
-  //       }
-  //       const data = await response.json();
-  //       setContent(data);
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //       setError(error.message);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    // Функция для получения данных из API
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `http://okalbm.ru/api/single_class/${API["GetClassPeople"]}/${classId}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setContent(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  //   fetchData(); // Вызываем функцию для получения данных
-  // }, []);
+    fetchData(); // Вызываем функцию для получения данных
+  }, []);
 
-  // if (isLoading) {
-  //   return (
-  //     <div
-  //       className="d-flex justify-content-center align-items-center"
-  //       style={{ height: "100vh" }}
-  //     >
-  //       <Spinner animation="border" role="status">
-  //         <span className="visually-hidden">Loading...</span>
-  //       </Spinner>
-  //     </div>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
+  }
   return (
     <>
       <Row>
@@ -150,7 +144,7 @@ export default function Class({ classId }) {
                   variant="light"
                   size="sm"
                   onClick={() => {
-                    controlFormData("addClassMain", classId);
+                    controlFormData("addClassPeople", classId);
                   }}
                 >
                   <i className="bi bi-plus-lg"></i>
@@ -158,7 +152,9 @@ export default function Class({ classId }) {
                 <Button
                   variant="light"
                   size="sm"
-                  onClick={() => setShowMultiAdd(true)}
+                  onClick={() => {
+                    controlFormData("multiAddClassPeople", classId);
+                  }}
                 >
                   <i className="bi bi-plus-square-dotted"></i>
                 </Button>
@@ -170,7 +166,7 @@ export default function Class({ classId }) {
                   <div className="d-flex justify-content-between align-items-start">
                     <div>
                       <div>
-                        {item.FirstName} {item.LastName}
+                        {item.Name} {item.LastName}
                       </div>
                     </div>
                     <div>
@@ -178,7 +174,7 @@ export default function Class({ classId }) {
                         variant="outline-secondary"
                         size="sm"
                         className="me-2"
-                        onClick={() => controlFormData("editClassMain", item)}
+                        onClick={() => controlFormData("editClassPeople", item)}
                       >
                         <i className="bi bi-pencil"></i>
                       </Button>
@@ -198,35 +194,35 @@ export default function Class({ classId }) {
         </Col>
       </Row>
       <UniversalModalForm
-        show={show && modalType === "addClassMain"}
+        show={show && modalType === "addClassPeople"}
         onHide={() => handleClose()}
         onFormChange={(e) => formEdit(e, setFormData)}
         formData={formData}
         title="Добавление ученика"
-        fields={addClassMainForm}
+        fields={addClassPeopleForm}
         onSubmit={() =>
           addItem(
             formData,
-            API["AddLog"],
+            API["AddClassPeople"],
             "single_class",
             setContent,
             handleClose
           )
         }
-        submitButtonText="Добавить"
+        submitButtonText="Добавить учеников"
       />
 
       <UniversalModalForm
-        show={show && modalType === "editClassMain"}
+        show={show && modalType === "editClassPeople"}
         onHide={() => handleClose()}
         formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
         title="Редактировать запись"
-        fields={editClassMainModal}
+        fields={editClassPeopleForm}
         onSubmit={() =>
           editItem(
             formData,
-            API["EditLog"],
+            API["EditClassPeople"],
             "single_class",
             setContent,
             handleClose
@@ -235,36 +231,36 @@ export default function Class({ classId }) {
         submitButtonText="Сохранить"
       />
 
+      <MultiAddModal
+        show={show && modalType === "multiAddClassPeople"}
+        onHide={() => handleClose()}
+        onSubmit={(studentsData) => {
+          studentsData.forEach((student) => {
+            addItem(
+              student, // Уже содержит ClassId
+              API["AddClassPeople"],
+              "single_class",
+              setContent,
+              () => {}
+            );
+          });
+          handleClose();
+        }}
+        classId={classId} // Передаём classId в модальное окно
+      />
+
       <DeleteModal
         show={show && modalType === "delete"}
         onHide={() => handleClose()}
         onConfirm={() =>
           deleteItem(
             formData,
-            API["DeleteLog"],
+            API["DeleteClassPeople"],
             "single_class",
             setContent,
             handleClose
           )
         }
-      />
-
-      <MultiAddModal
-        show={showMultiAdd}
-        onHide={() => setShowMultiAdd(false)}
-        onSubmit={(studentsData) => {
-          // Для каждого ученика вызываем addItem
-          studentsData.forEach((student) => {
-            addItem(
-              student,
-              API["AddLog"],
-              "single_class",
-              setContent,
-              () => {} // Не закрываем модалку после каждого добавления
-            );
-          });
-          handleClose(); // Закрываем модалку после всех добавлений
-        }}
       />
     </>
   );

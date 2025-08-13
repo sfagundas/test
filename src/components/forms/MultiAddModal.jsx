@@ -2,14 +2,11 @@ import { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 
 const MultiAddModal = ({ show, onHide, onSubmit, classId }) => {
-  // Добавляем classId в props
   const [inputText, setInputText] = useState("");
 
   const handleAdd = () => {
-    // Переименовываем handleSubmit в handleAdd
     const lines = inputText.split("\n").filter((line) => line.trim() !== "");
 
-    // Проверяем, что все строки в правильном формате
     const hasInvalidFormat = lines.some(
       (line) => line.trim().split(/\s+/).length < 2
     );
@@ -22,11 +19,11 @@ const MultiAddModal = ({ show, onHide, onSubmit, classId }) => {
     }
 
     const studentsData = lines.map((line) => {
-      const [LastName, FirstName] = line.trim().split(/\s+/);
+      const [Name, LastName] = line.trim().split(/\s+/);
       return {
-        FirstName: FirstName || "",
+        Name: Name || "",
         LastName: LastName || "",
-        ClassId: classId, // Используем переданный classId
+        ClassId: classId,
       };
     });
 
@@ -36,7 +33,7 @@ const MultiAddModal = ({ show, onHide, onSubmit, classId }) => {
   };
 
   return (
-    <Modal show={show} onHide={onHide} size="lg">
+    <Modal show={show} onHide={onHide} size="6">
       <Modal.Header closeButton>
         <Modal.Title>Добавление нескольких учеников</Modal.Title>
       </Modal.Header>
@@ -48,15 +45,10 @@ const MultiAddModal = ({ show, onHide, onSubmit, classId }) => {
           </Form.Label>
           <Form.Control
             as="textarea"
-            rows={10}
+            rows={5}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Иванов Алексей\nПетрова Мария\n..."
           />
-          <Form.Text className="text-muted">
-            Пример ввода: Фамилия и Имя через пробел, каждый ученик с новой
-            строки
-          </Form.Text>
         </Form.Group>
       </Modal.Body>
       <Modal.Footer>

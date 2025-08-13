@@ -116,24 +116,26 @@ export const editLogForm = [
   },
 ];
 
-export const addClassMainForm = [
+export const addClassPeopleForm = [
   {
-    name: "FirstName",
+    name: "Name",
     label: "Имя",
     type: "text",
     required: true,
+    colSize: 6,
   },
   {
     name: "LastName",
     label: "Фамилия",
     type: "text",
     required: true,
+    colSize: 6,
   },
 ];
 
-export const multiAddClassMainForm = [
+export const editClassPeopleForm = [
   {
-    name: "FirstName",
+    name: "Name",
     label: "Имя",
     type: "text",
     required: true,
@@ -144,20 +146,20 @@ export const multiAddClassMainForm = [
     type: "text",
     required: true,
   },
-];
-
-export const editClassMainModal = [
   {
-    name: "FirstName",
-    label: "Имя",
+    name: "PersonalText",
+    label: "Цитата",
     type: "text",
-    required: true,
   },
   {
-    name: "LastName",
-    label: "Фамилия",
+    name: "Associations",
+    label: "Ассоциация",
     type: "text",
-    required: true,
+  },
+  {
+    name: "Portrait",
+    label: "Номер фото",
+    type: "text",
   },
 ];
 
