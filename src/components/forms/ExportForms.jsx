@@ -139,17 +139,19 @@ export const editClassPeopleForm = [
     label: "Имя",
     type: "text",
     required: true,
+    colSize: 6,
   },
   {
     name: "LastName",
     label: "Фамилия",
     type: "text",
     required: true,
+    colSize: 6,
   },
   {
     name: "PersonalText",
     label: "Цитата",
-    type: "text",
+    type: "textarea",
   },
   {
     name: "Associations",
@@ -160,6 +162,53 @@ export const editClassPeopleForm = [
     name: "Portrait",
     label: "Номер фото",
     type: "text",
+    colSize: 3,
+  },
+];
+
+export const addClassTeacherForm = [
+  {
+    name: "Name",
+    label: "Имя",
+    type: "text",
+    required: true,
+    colSize: 6,
+  },
+  {
+    name: "LastName",
+    label: "Фамилия",
+    type: "text",
+    required: true,
+    colSize: 6,
+  },
+];
+
+export const editClassTeacherForm = [
+  {
+    name: "Name",
+    label: "Имя",
+    type: "text",
+    required: true,
+    colSize: 6,
+  },
+  {
+    name: "LastName",
+    label: "Фамилия",
+    type: "text",
+    required: true,
+    colSize: 6,
+  },
+  {
+    name: "Subject",
+    label: "Предмет",
+    type: "text",
+    colSize: 6,
+  },
+  {
+    name: "Portrait",
+    label: "Номер фото",
+    type: "text",
+    colSize: 3,
   },
 ];
 

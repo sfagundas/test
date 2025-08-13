@@ -5,8 +5,8 @@ import { Button, Spinner, Row, Col, Badge, Tab, Nav } from "react-bootstrap";
 
 import Main from "./single_class/Main";
 import Photosessions from "./single_class/Photosessions";
-import ClassMain from "./single_class/ClassPeople";
-import Teachers from "./single_class/Teachers";
+import ClassPeople from "./single_class/ClassPeople";
+import ClassTeachers from "./single_class/ClassTeachers";
 
 export default function Class() {
   const { class_id } = useParams();
@@ -100,11 +100,11 @@ export default function Class() {
               </Tab.Pane>
 
               <Tab.Pane eventKey="class" title="class">
-                <ClassMain classId={class_id} />
+                <ClassPeople classId={class_id} />
               </Tab.Pane>
 
               <Tab.Pane eventKey="teachers" title="teachers">
-                <Teachers classId={class_id} />
+                <ClassTeachers classId={class_id} />
               </Tab.Pane>
             </Tab.Content>
           </Col>

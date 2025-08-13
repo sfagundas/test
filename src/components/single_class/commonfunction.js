@@ -16,6 +16,10 @@ export const API = {
   AddClassPeople: "add_class_people",
   EditClassPeople: "edit_class_people",
   DeleteClassPeople: "delete_class_people",
+  GetClassTeachers: "get_class_teachers",
+  AddClassTeacher: "add_class_teacher",
+  EditClassTeacher: "edit_class_teacher",
+  DeleteClassTeacher: "delete_class_teacher",
 };
 
 export const formEdit = (e, setFormData) => {

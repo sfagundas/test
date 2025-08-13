@@ -1,47 +1,72 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 
-const MultiAddModal = ({ show, onHide, onSubmit, classId }) => {
+const MultiAddModal = ({
+  show,
+  onHide,
+  onSubmit,
+  initialData,
+  fields,
+  title = "Добавление записей",
+  validationError = "Неправильный формат данных",
+}) => {
   const [inputText, setInputText] = useState("");
+
+  // Сбрасываем текст при каждом закрытии модалки
+  useEffect(() => {
+    if (!show) {
+      setInputText("");
+    }
+  }, [show]);
 
   const handleAdd = () => {
     const lines = inputText.split("\n").filter((line) => line.trim() !== "");
 
-    const hasInvalidFormat = lines.some(
-      (line) => line.trim().split(/\s+/).length < 2
-    );
+    const hasInvalidFormat = lines.some((line) => {
+      const parts = line.trim().split(/\s+/);
+      return parts.length < fields.filter((f) => f.required).length;
+    });
 
     if (hasInvalidFormat) {
-      alert(
-        "Некоторые строки имеют неправильный формат. Используйте 'Фамилия Имя'"
-      );
+      alert(validationError);
       return;
     }
 
-    const studentsData = lines.map((line) => {
-      const [Name, LastName] = line.trim().split(/\s+/);
-      return {
-        Name: Name || "",
-        LastName: LastName || "",
-        ClassId: classId,
-      };
+    const recordsData = lines.map((line) => {
+      const values = line.trim().split(/\s+/);
+      const record = { ...initialData };
+
+      fields.forEach((field, index) => {
+        if (values[index]) {
+          record[field.name] = values[index];
+        }
+      });
+
+      return record;
     });
 
-    onSubmit(studentsData);
+    onSubmit(recordsData);
     setInputText("");
-    onHide();
+    onHide(); // Используем переданный onHide
+  };
+
+  const handleClose = () => {
+    setInputText("");
+    onHide(); // Вызываем оригинальный onHide
   };
 
   return (
-    <Modal show={show} onHide={onHide} size="6">
+    <Modal show={show} onHide={handleClose} size="6">
+      {" "}
+      {/* Используем handleClose здесь */}
       <Modal.Header closeButton>
-        <Modal.Title>Добавление нескольких учеников</Modal.Title>
+        <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form.Group>
           <Form.Label>
-            Введите фамилии и имена учеников (каждый с новой строки в формате
-            "Фамилия Имя"):
+            Введите данные (каждый с новой строки в формате "
+            {fields.map((f) => f.label).join(" ")}"):
           </Form.Label>
           <Form.Control
             as="textarea"
@@ -52,13 +77,13 @@ const MultiAddModal = ({ show, onHide, onSubmit, classId }) => {
         </Form.Group>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button variant="secondary" onClick={handleClose}>
+          {" "}
+          {/* Используем handleClose */}
           Отмена
         </Button>
         <Button variant="primary" onClick={handleAdd}>
-          {" "}
-          {/* Используем handleAdd */}
-          Добавить учеников
+          Добавить
         </Button>
       </Modal.Footer>
     </Modal>

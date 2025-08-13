@@ -387,11 +387,16 @@ export default function Main({ classId }) {
               {logs.map((log) => (
                 <div key={log.Id} className="mb-3 p-2 border-bottom">
                   <div className="d-flex justify-content-between align-items-start">
-                    <div>
-                      <OkBadgeDateMain date={log.DateTime} />
-                      <div>{log.Text}</div>
+                    <div
+                      className="flex-grow-1 me-3"
+                      style={{ wordBreak: "break-word" }}
+                    >
+                      <div style={{ margin: 0, padding: 0, lineHeight: 1 }}>
+                        <OkBadgeDateMain date={log.DateTime} />
+                      </div>
+                      <div style={{ marginTop: "4px" }}>{log.Text}</div>
                     </div>
-                    <div>
+                    <div className="flex-shrink-0">
                       <Button
                         variant="outline-secondary"
                         size="sm"

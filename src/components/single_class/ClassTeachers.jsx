@@ -21,7 +21,10 @@ import {
 
 import UniversalModalForm from "../forms/UniversalModalForm";
 import MultiAddModal from "../forms/MultiAddModal";
-import { addClassPeopleForm, editClassPeopleForm } from "../forms/ExportForms";
+import {
+  addClassTeacherForm,
+  editClassTeacherForm,
+} from "../forms/ExportForms";
 
 const DeleteModal = ({ show, onHide, onConfirm }) => {
   return (
@@ -44,7 +47,7 @@ const DeleteModal = ({ show, onHide, onConfirm }) => {
   );
 };
 
-export default function Class({ classId }) {
+export default function Teachers({ classId }) {
   const formDataContent = {
     Id: "",
   };
@@ -59,20 +62,19 @@ export default function Class({ classId }) {
 
   const controlFormData = (type, data) => {
     setModalType(type);
-    if (type === "addClassPeople" || type === "multiAddClassPeople") {
+    if (type === "addClassTeacher" || type === "multiAddClassTeacher") {
       setFormData({
         ClassId: classId,
         Name: data.Name,
         LastName: data.LastName,
       });
-    } else if (type === "editClassPeople") {
+    } else if (type === "editClassTeacher") {
       console.log(data);
       setFormData({
         Id: data.Id || "",
         Name: data.Name || "",
         LastName: data.LastName || "",
-        PersonalText: data.PersonalText || "",
-        Associations: data.Associations || "",
+        Subject: data.Subject || "",
         Portrait: data.Portrait || "",
       });
     } else if (type === "delete") {
@@ -96,7 +98,7 @@ export default function Class({ classId }) {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://okalbm.ru/api/single_class/${API["GetClassPeople"]}/${classId}`
+          `http://okalbm.ru/api/single_class/${API["GetClassTeachers"]}/${classId}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -132,13 +134,13 @@ export default function Class({ classId }) {
         <Col lg={4}>
           <Card>
             <Card.Header className="d-flex justify-content-between align-items-center">
-              <span>Класс</span>
+              <span>Учителя</span>
               <div gap-0>
                 <Button
                   variant="light"
                   size="sm"
                   onClick={() => {
-                    controlFormData("addClassPeople", classId);
+                    controlFormData("addClassTeacher", classId);
                   }}
                 >
                   <i className="bi bi-plus-lg"></i>
@@ -147,7 +149,7 @@ export default function Class({ classId }) {
                   variant="light"
                   size="sm"
                   onClick={() => {
-                    controlFormData("multiAddClassPeople", classId);
+                    controlFormData("multiAddClassTeacher", classId);
                   }}
                 >
                   <i className="bi bi-plus-square-dotted"></i>
@@ -171,7 +173,9 @@ export default function Class({ classId }) {
                         variant="outline-secondary"
                         size="sm"
                         className="me-2"
-                        onClick={() => controlFormData("editClassPeople", item)}
+                        onClick={() =>
+                          controlFormData("editClassTeacher", item)
+                        }
                       >
                         <i className="bi bi-pencil"></i>
                       </Button>
@@ -191,35 +195,35 @@ export default function Class({ classId }) {
         </Col>
       </Row>
       <UniversalModalForm
-        show={show && modalType === "addClassPeople"}
+        show={show && modalType === "addClassTeacher"}
         onHide={() => handleClose()}
         onFormChange={(e) => formEdit(e, setFormData)}
         formData={formData}
         title="Добавление ученика"
-        fields={addClassPeopleForm}
+        fields={addClassTeacherForm}
         onSubmit={() =>
           addItem(
             formData,
-            API["AddClassPeople"],
+            API["AddClassTeacher"],
             "single_class",
             setContent,
             handleClose
           )
         }
-        submitButtonText="Добавить учеников"
+        submitButtonText="Добавить учителя"
       />
 
       <UniversalModalForm
-        show={show && modalType === "editClassPeople"}
+        show={show && modalType === "editClassTeacher"}
         onHide={() => handleClose()}
         formData={formData}
         onFormChange={(e) => formEdit(e, setFormData)}
         title="Редактировать запись"
-        fields={editClassPeopleForm}
+        fields={editClassTeacherForm}
         onSubmit={() =>
           editItem(
             formData,
-            API["EditClassPeople"],
+            API["EditClassTeacher"],
             "single_class",
             setContent,
             handleClose
@@ -229,13 +233,13 @@ export default function Class({ classId }) {
       />
 
       <MultiAddModal
-        show={show && modalType === "multiAddClassPeople"}
+        show={show && modalType === "multiAddClassTeacher"}
         onHide={handleClose}
         onSubmit={(Data) => {
           Data.forEach((item) => {
             addItem(
               item,
-              API["AddClassPeople"],
+              API["AddClassTeacher"],
               "single_class",
               setContent,
               () => {}
@@ -244,8 +248,8 @@ export default function Class({ classId }) {
           handleClose();
         }}
         initialData={{ ClassId: classId }}
-        fields={addClassPeopleForm} // Используем ту же конфигурацию
-        title="Добавление учеников"
+        fields={addClassTeacherForm}
+        title="Добавление учителей"
         validationError="Используйте формат 'Фамилия Имя'"
       />
 
@@ -255,7 +259,7 @@ export default function Class({ classId }) {
         onConfirm={() =>
           deleteItem(
             formData,
-            API["DeleteClassPeople"],
+            API["DeleteClassTeacher"],
             "single_class",
             setContent,
             handleClose
