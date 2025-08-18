@@ -199,7 +199,7 @@ export default function Teachers({ classId }) {
         onHide={() => handleClose()}
         onFormChange={(e) => formEdit(e, setFormData)}
         formData={formData}
-        title="Добавление ученика"
+        title="Добавление учителя"
         fields={addClassTeacherForm}
         onSubmit={() =>
           addItem(

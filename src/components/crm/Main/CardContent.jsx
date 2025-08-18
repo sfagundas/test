@@ -1,6 +1,7 @@
 import React from "react";
-import { Card, Dropdown, Row, Col } from "react-bootstrap";
+import { Card, Dropdown, Row, Col, Accordion } from "react-bootstrap";
 import OkBadgeDate from "../../custom/OkBadgeDate";
+import CrmAccordion from "../../custom/CrmAccordion";
 
 const CardContent = ({ content, controlFormData, StatusId }) => {
   return (
@@ -8,18 +9,13 @@ const CardContent = ({ content, controlFormData, StatusId }) => {
       {content
         .filter((item) => item.StatusId == StatusId || !item.StatusId)
         .map((item) => (
-          <Col sm={12} md={6} lg={4} xl={3} key={item.Id}>
+          <Col sm={12} md={8} lg={6} key={item.Id}>
             <Card className="mb-3">
               <Card.Body style={{ paddingBottom: "10px" }}>
                 <div className="d-flex justify-content-between">
-                  <Card.Title className="mb-2">
-                    <div className="d-flex align-items-center">
-                      <span style={{ fontSize: "14px" }}>
-                        {item.ClientName}
-                      </span>
-                    </div>
-                  </Card.Title>
-                  <div>
+                    <small style={{ fontSize: "20px", flex: "1 1 auto" }} className="flex-grow-2">{item.ClientName}</small>
+                    <small style={{ fontSize: "20px", flex: "1 1 auto"}} className="flex-grow-2">{/*{item.CityId}*/}Петропавловск-Камчатский</small>
+                     <div style={{ flex: "0 0 auto" }}>       
                     <Dropdown>
                       <Dropdown.Toggle
                         variant="light"
@@ -67,35 +63,19 @@ const CardContent = ({ content, controlFormData, StatusId }) => {
                           </Dropdown.Item>
                         )}
                       </Dropdown.Menu>
-                    </Dropdown>
-                  </div>
+                    </Dropdown>   
+                    </div>         
                 </div>
-                <div className="mb-2 text-body-secondary">
-                  <Row>
-                    <Col sm={1} className="pt-1" style={{ fontSize: "12px" }}>
-                      <i className="bi bi-telephone "></i>
-                    </Col>
-                    <Col sm={10}>
-                      <small style={{ fontSize: "11px" }}>{item.Phone}</small>
-                    </Col>
-                  </Row>
-                </div>
-                <div
-                  className="mb-2 text-body-secondary"
-                  style={{ fontSize: "12px" }}
-                >
-                  <Row>
-                    <Col sm={1} className="pt-1">
-                      <i className="bi bi-chat-right-text me-3"></i>
-                    </Col>
-                    <Col sm={10}>
-                      <small>{item.ManagerNotes}</small>
-                    </Col>
-                  </Row>
-                </div>
+                <div className="my-3 d-flex justify-content-between">
+                <div style={{flex:"1 1 auto"}}>
                 {item.NextDate && item.NextDate.trim() !== "" && (
                   <OkBadgeDate date={item.NextDate} />
-                )}
+                  
+                )}</div>
+                <small style={{ fontSize: "20px", flex: "1 1 auto" }} >{item.Phone}</small>
+                </div>
+                
+          <CrmAccordion content={item.ManagerNotes}></CrmAccordion>
               </Card.Body>
             </Card>
           </Col>
