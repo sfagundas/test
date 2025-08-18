@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Dropdown, Row, Col, Accordion } from "react-bootstrap";
-import OkBadgeDate from "../../custom/OkBadgeDate";
+import OkBadgeDate from "../../custom/OkBadgeDateCrm";
 import CrmAccordion from "../../custom/CrmAccordion";
 
 const CardContent = ({ content, controlFormData, StatusId }) => {

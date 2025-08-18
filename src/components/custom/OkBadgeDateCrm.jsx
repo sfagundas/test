@@ -33,7 +33,10 @@ const OkBadgeDate = ({ date }) => {
     <div>
       <span
         className={badgeClass}
-        style={{ fontSize: "10px", fontWeight: "500" }}
+        style={{ fontSize: "15px", fontWeight: "500", padding: "8px 25px", 
+          display: "inline-block", 
+          borderRadius: "12px",
+          textAlign: "center" }}
       >
         {formattedDate}
       </span>
