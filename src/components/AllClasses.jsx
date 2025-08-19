@@ -70,7 +70,7 @@ function AllClasses() {
             <Card className="mb-3">
               <Card.Body style={{ paddingBottom: "10px" }}>
                 <div className="d-flex justify-content-between">
-                  <Card.Title className="mb-2">
+                  <Card.Title className="mb-0">
                     <div className="d-flex align-items-center">
                       <span style={{ fontSize: "25px" }}>
                         <Link to={`/classes/single_class/${item.Id}`}>
@@ -80,13 +80,15 @@ function AllClasses() {
                     </div>
                   </Card.Title>
                 </div>
-                <div className="d-flex justify-content-between">
-                  <small style={{ fontSize: "25px" }}>Петропавловск Камчатский{/*Мы здесь не получаем город, нужно менять апи*/}</small>
+                <div className="my-3 d-flex justify-content-between">
+                  <small style={{ fontSize: "25px" }}>{item.CityName}</small>
                   <small style={{ fontSize: "25px" }}>У[25]П[5]Ц[3]А[7]О[2]Ф[J]</small>
                 </div>
 
 
+                <div className="mb-3">
                 <OkBadgeDate date={"2025-04-20"} />
+                </div>
               </Card.Body>
             </Card>
           </Col>

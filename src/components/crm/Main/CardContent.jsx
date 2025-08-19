@@ -14,7 +14,7 @@ const CardContent = ({ content, controlFormData, StatusId }) => {
               <Card.Body style={{ paddingBottom: "10px" }}>
                 <div className="d-flex justify-content-between">
                     <small style={{ fontSize: "20px", flex: "1 1 auto" }} className="flex-grow-2">{item.ClientName}</small>
-                    <small style={{ fontSize: "20px", flex: "1 1 auto"}} className="flex-grow-2">{/*{item.CityId}*/}Петропавловск-Камчатский</small>
+                    <small style={{ fontSize: "20px", flex: "1 1 auto"}} className="flex-grow-2">{item.CityName}</small>
                      <div style={{ flex: "0 0 auto" }}>       
                     <Dropdown>
                       <Dropdown.Toggle
