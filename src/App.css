@@ -1,26 +1,35 @@
 nav .active {
-  background: rgb(255, 200, 18) !important;
-  border-radius: 5px;
-  opacity: 0.8;
+	background: rgb(255, 200, 18) !important;
+	border-radius: 5px;
+	opacity: 0.8;
 }
 .navbar-nav .nav-link {
-  padding: 6px 20px !important;
+	padding: 6px 20px !important;
 }
 .nav-pills {
-  --bs-nav-pills-link-active-bg: rgb(255, 200, 18) !important;
-  --bs-nav-pills-link-active-color: #282828 !important;
+	--bs-nav-pills-link-active-bg: rgb(255, 200, 18) !important;
+	--bs-nav-pills-link-active-color: #282828 !important;
 }
 
 .mainCardTitle {
-  font-size: 15px !important;
-  text-transform: uppercase;
+	font-size: 15px !important;
+	text-transform: uppercase;
 }
 
 .custom-accordion-btn:hover {
-  background-color: #f8f9fa !important; /* Светло-серый фон */
-  opacity: 1; /* Легкое затемнение */
+	background-color: #f8f9fa !important; /* Светло-серый фон */
+	opacity: 1; /* Легкое затемнение */
 }
 
 .custom-accordion-btn:focus {
-  box-shadow: none !important; /* Убираем свечение при фокусе */
+	box-shadow: none !important; /* Убираем свечение при фокусе */
+}
+/* ширина бокового меню */
+.sidebar-width {
+	width: 240px;
+}
+
+/* основной контент сдвигается вправо */
+.main-content {
+	margin-left: 240px;
 }
