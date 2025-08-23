@@ -95,6 +95,19 @@ const Sidebar = () => {
 					<i className='bi bi-shield-lock me-2'></i> Доступ
 				</Nav.Link>
 			</Nav>
+			<div className='mb-2 text-muted fw-bold small'>Тест</div>
+			<Nav className='flex-column'>
+				<Nav.Link
+					as={Link}
+					to='/calendar'
+					className={
+						activeLink === '/calendar' ? 'fw-bold text-primary' : 'text-dark'
+					}
+					onClick={() => handleLinkClick('/calendar')}
+				>
+					<i className='bi bi-table me-2'></i>Календарь
+				</Nav.Link>
+			</Nav>
 		</div>
 	)
 }
