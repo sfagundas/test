@@ -1,4 +1,3 @@
-// CardContent.js
 import React, { useState } from 'react'
 import { Card, Dropdown } from 'react-bootstrap'
 import OkBadgeDate from '../../custom/OkBadgeDateCRM1'
@@ -115,12 +114,63 @@ const CardContent = ({ content, controlFormData }) => {
 							{item.CityName}
 						</div>
 
-						<div style={{ marginTop: 15 }}>
-							{/* Строка: бейдж + телефон */}
-							<div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+						{/* Строка 3: Бейдж + Телефон + Кнопка аккордеона */}
+						<div
+							style={{
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'space-between',
+								marginTop: 15,
+								position: 'relative',
+							}}
+						>
+							{/* Левая часть: бейдж */}
+							<div style={{ flex: 1 }}>
 								{item.NextDate && item.NextDate.trim() !== '' && (
 									<OkBadgeDate date={item.NextDate} />
 								)}
+							</div>
+
+							{/* Центр: кнопка аккордеона */}
+							<div
+								style={{
+									position: 'absolute',
+									left: '50%',
+									transform: 'translateX(-50%)',
+								}}
+							>
+								<button
+									onClick={() => toggleAccordion(item.Id)}
+									style={{
+										width: 12,
+										height: 12,
+										border: 'none',
+										padding: 0,
+										backgroundColor: 'transparent',
+										cursor: 'pointer',
+									}}
+								>
+									<img
+										src={require('../../../images/downArrow.png')}
+										alt='toggle'
+										style={{
+											width: '100%',
+											height: '100%',
+											transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+											transition: 'transform 0.3s ease',
+										}}
+									/>
+								</button>
+							</div>
+
+							{/* Правая часть: телефон */}
+							<div
+								style={{
+									flex: 1,
+									display: 'flex',
+									justifyContent: 'flex-end',
+								}}
+							>
 								<div
 									style={{
 										fontFamily: 'Montserrat',
@@ -133,10 +183,21 @@ const CardContent = ({ content, controlFormData }) => {
 									{item.Phone}
 								</div>
 							</div>
-
-							{/* Аккордеон: кнопка по центру и текст под ней */}
-							<CrmAccordion content={item.ManagerNotes} buttonSize={12} />
 						</div>
+
+						{/* Строка 4: Контент аккордеона с белым фоном */}
+						{isOpen && item.ManagerNotes && item.ManagerNotes.trim() !== '' && (
+							<div
+								style={{
+									marginTop: 8,
+									background: '#FFFFFF',
+									borderRadius: 4,
+									padding: 8,
+								}}
+							>
+								<CrmAccordion content={item.ManagerNotes} />
+							</div>
+						)}
 					</Card>
 				)
 			})}
